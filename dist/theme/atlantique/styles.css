@@ -1,0 +1,845 @@
+@font-face {
+  font-family: "Poppins";
+  src: url("fonts/poppins/Poppins-Regular.ttf");
+  font-weight: 400;
+}
+@font-face {
+  font-family: "Poppins";
+  src: url("fonts/poppins/Poppins-Italic.ttf");
+  font-weight: 400;
+  font-style: italic;
+}
+@font-face {
+  font-family: "Poppins";
+  src: url("fonts/poppins/Poppins-SemiBold.ttf");
+  font-weight: 600;
+}
+@font-face {
+  font-family: "Poppins";
+  src: url("fonts/poppins/Poppins-Bold.ttf");
+  font-weight: 700;
+}
+@font-face {
+  font-family: "Poppins";
+  src: url("fonts/poppins/Poppins-ExtraBold.ttf");
+  font-weight: 800;
+}
+* {
+  box-sizing: border-box;
+}
+
+.reveal .c-category p {
+  position: absolute;
+  display: none;
+  font-weight: 700;
+  color: #9DE6FF;
+}
+@media (width >= 1024px) {
+  .reveal .c-category p {
+    top: 4rem;
+    left: 10rem;
+    display: block;
+    font-size: 1rem !important;
+  }
+}
+
+.reveal .controls {
+  display: none !important;
+}
+@media (width >= 768px) and (height >= 600px) {
+  .reveal .controls {
+    display: block !important;
+  }
+}
+
+.reveal .controls,
+.reveal.has-horizontal-slides .controls,
+.reveal.has-vertical-slides .controls {
+  right: 4.25rem;
+  bottom: 4.25rem;
+  width: 7.25rem;
+  height: 7.25rem;
+  border-radius: 100%;
+  background-color: #01012F;
+}
+.reveal .controls .navigate-right,
+.reveal.has-horizontal-slides .controls .navigate-right,
+.reveal.has-vertical-slides .controls .navigate-right {
+  right: 0.75em;
+  bottom: 4em;
+  color: #9DE6FF;
+}
+.reveal .controls .navigate-down,
+.reveal.has-horizontal-slides .controls .navigate-down,
+.reveal.has-vertical-slides .controls .navigate-down {
+  right: 4em;
+  bottom: 1em;
+  padding-bottom: inherit;
+  color: #FF6DF0;
+}
+.reveal .controls .navigate-left,
+.reveal.has-horizontal-slides .controls .navigate-left,
+.reveal.has-vertical-slides .controls .navigate-left {
+  bottom: 4em;
+  left: 0.75em;
+  color: #FBFE7A;
+}
+.reveal .controls > .navigate-up,
+.reveal.has-horizontal-slides .controls > .navigate-up,
+.reveal.has-vertical-slides .controls > .navigate-up {
+  top: 0.25em;
+  right: 3.9em;
+  color: #FFFFFF;
+}
+.reveal .controls.controls[data-controls-back-arrows=faded] .enabled,
+.reveal.has-horizontal-slides .controls.controls[data-controls-back-arrows=faded] .enabled,
+.reveal.has-vertical-slides .controls.controls[data-controls-back-arrows=faded] .enabled {
+  opacity: 1;
+}
+
+.reveal section img {
+  margin: 0;
+  border: none;
+  background: inherit;
+  box-shadow: none;
+}
+
+.c-image--logo-1 {
+  position: absolute;
+  bottom: 3rem;
+  left: calc(50% - 12rem);
+  width: 10rem;
+}
+
+.c-image--logo-onepoint {
+  position: absolute;
+  left: calc(50% + 2rem);
+  bottom: 2.5rem;
+  width: 10rem;
+}
+
+.c-image--title {
+  width: 200rem;
+}
+
+.c-image--with-background img {
+  background-color: #FFFFFF !important;
+}
+
+.reveal ul {
+  list-style-type: none;
+  margin: 0;
+}
+
+.reveal li {
+  margin: 1rem 0;
+  text-align: center;
+}
+
+.reveal .progress {
+  height: 0.5rem;
+  background: #271A0F;
+  color: #FBFE7A;
+}
+
+.reveal .c-quote {
+  display: flex;
+  flex-direction: column;
+  font-family: "Poppins", sans-serif;
+  font-size: 3rem;
+  gap: 1.5rem;
+}
+.reveal .c-quote::before {
+  width: 2rem;
+  height: 2rem;
+  content: "";
+  background-image: url("images/svg/before-quotes.svg");
+  background-repeat: no-repeat;
+  background-size: contain;
+  align-self: flex-start;
+  margin-bottom: -1rem;
+}
+@media (width >= 1024px) {
+  .reveal .c-quote::before {
+    width: 4rem;
+    height: 4rem;
+  }
+}
+.reveal .c-quote::after {
+  width: 2rem;
+  height: 2rem;
+  content: "";
+  background-image: url("images/svg/after-quotes.svg");
+  background-repeat: no-repeat;
+  background-size: contain;
+  align-self: flex-end;
+}
+@media (width >= 1024px) {
+  .reveal .c-quote::after {
+    width: 4rem;
+    height: 4rem;
+  }
+}
+
+.reveal .c-quote blockquote {
+  width: inherit;
+  margin: 0;
+  padding: 0;
+  background: none;
+  box-shadow: none;
+  font-style: normal;
+  text-align: left;
+}
+@media (width >= 768px) {
+  .reveal .c-quote blockquote {
+    font-size: 2rem;
+  }
+}
+
+.c-quote .attribution {
+  align-self: flex-end;
+  font-size: 1rem;
+  font-style: italic;
+}
+@media (width >= 768px) {
+  .c-quote .attribution {
+    font-size: 1.5rem;
+  }
+}
+
+@media (width >= 768px) {
+  .reveal .c-quote--huge {
+    margin: 0 5rem;
+  }
+}
+.reveal .c-quote--huge blockquote {
+  font-size: 2rem;
+  font-weight: 800;
+}
+@media (width >= 768px) {
+  .reveal .c-quote--huge blockquote {
+    font-size: 2rem;
+  }
+}
+@media (width >= 1440px) {
+  .reveal .c-quote--huge blockquote {
+    font-size: 4rem;
+  }
+}
+.reveal .c-quote--huge .attribution {
+  font-size: 1rem;
+}
+@media (width >= 768px) {
+  .reveal .c-quote--huge .attribution {
+    font-size: 1.5rem;
+  }
+}
+
+.reveal .slides {
+  width: 100% !important;
+  height: 100% !important;
+  margin: 0 auto;
+  zoom: inherit !important;
+}
+
+.reveal .slides section > section .slide-content p {
+  margin: 0;
+}
+
+.reveal .slides > section > section.present,
+.reveal .slides > section.c-slide--last {
+  height: 100%;
+  display: flex !important;
+  align-items: center;
+  justify-content: center;
+  flex-direction: column;
+  gap: 2rem;
+  padding: 0 2.5rem 1rem;
+}
+@media (width >= 768px) {
+  .reveal .slides > section > section.present,
+  .reveal .slides > section.c-slide--last {
+    padding: 0 5rem 1rem;
+  }
+}
+@media (width >= 1440px) {
+  .reveal .slides > section > section.present,
+  .reveal .slides > section.c-slide--last {
+    padding: 0 10rem 1rem;
+  }
+}
+
+.reveal .slides > section .slide-content .c-slide__info {
+  position: absolute;
+  bottom: 3.5rem;
+  left: 3rem;
+  width: 12rem;
+}
+
+.reveal .slides > section .slide-content .c-slide__info--large {
+  position: absolute;
+  bottom: 3.5rem;
+  left: 3rem;
+  width: 32rem;
+}
+
+.reveal .slides > section.c-slide--last .slide-content {
+  display: grid;
+  grid-template: auto auto auto/1fr 1fr;
+  grid-template-areas: "nom nom" "nom1 nom2" "qrcode1 qrcode2";
+}
+.reveal .slides > section.c-slide--last .slide-content > :first-child {
+  grid-area: nom;
+}
+.reveal .slides > section.c-slide--last .slide-content .imageblock {
+  width: fit-content;
+  justify-self: center;
+  height: 70%;
+}
+
+section.title.present.c-slide--lights-elephant-crane {
+  display: flex !important;
+  justify-content: center;
+  align-items: center;
+}
+@media (width >= 1024px) {
+  section.title.present.c-slide--lights-elephant-crane {
+    padding-left: 40%;
+  }
+}
+@media (width > 1200px) {
+  section.title.present.c-slide--lights-elephant-crane {
+    padding-left: 0;
+    padding-top: 8rem;
+  }
+}
+section.title.present.c-slide--lights, section.title.present.c-slide--lights-left {
+  display: flex !important;
+  justify-content: center;
+  align-items: center;
+}
+section.title.present.c-slide--elephant, section.title.present.c-slide--elephant-o {
+  display: flex !important;
+  justify-content: center;
+  align-items: center;
+}
+@media (width >= 1024px) {
+  section.title.present.c-slide--elephant, section.title.present.c-slide--elephant-o {
+    padding-right: 40%;
+  }
+}
+section.title.present.c-slide--crane-bottom, section.title.present.c-slide--crane-left {
+  display: flex !important;
+  justify-content: center;
+  align-items: center;
+}
+@media (width >= 1024px) {
+  section.title.present.c-slide--crane-bottom, section.title.present.c-slide--crane-left {
+    padding-left: 40%;
+  }
+}
+
+section.stack > section.present.c-slide--lights-elephant-crane.je-jure-solennellement-que-mes-intention-sont-mauvaises,
+section.present:not(.title).c-slide--lights-elephant-crane.je-jure-solennellement-que-mes-intention-sont-mauvaises {
+  display: flex !important;
+  justify-content: center;
+  align-items: center;
+}
+@media (width >= 1024px) {
+  section.stack > section.present.c-slide--lights-elephant-crane.je-jure-solennellement-que-mes-intention-sont-mauvaises,
+  section.present:not(.title).c-slide--lights-elephant-crane.je-jure-solennellement-que-mes-intention-sont-mauvaises {
+    padding-left: 40%;
+  }
+}
+@media (width > 1200px) {
+  section.stack > section.present.c-slide--lights-elephant-crane.je-jure-solennellement-que-mes-intention-sont-mauvaises,
+  section.present:not(.title).c-slide--lights-elephant-crane.je-jure-solennellement-que-mes-intention-sont-mauvaises {
+    padding-left: 0;
+    padding-top: 8rem;
+  }
+}
+section.stack > section.present.c-slide--lights-elephant-crane:not(.je-jure-solennellement-que-mes-intention-sont-mauvaises),
+section.present:not(.title).c-slide--lights-elephant-crane:not(.je-jure-solennellement-que-mes-intention-sont-mauvaises) {
+  background-color: red;
+  width: 100%;
+  height: 100%;
+}
+section.stack > section.present.c-slide--lights-elephant-crane:not(.je-jure-solennellement-que-mes-intention-sont-mauvaises)::before,
+section.present:not(.title).c-slide--lights-elephant-crane:not(.je-jure-solennellement-que-mes-intention-sont-mauvaises)::before {
+  width: 100%;
+  height: 100%;
+  content: "Merci de ne pas utiliser cette configuration autrement que pour la slide titre";
+  color: black;
+}
+section.stack > section.present.c-slide--lights-elephant-crane:not(.je-jure-solennellement-que-mes-intention-sont-mauvaises) *,
+section.present:not(.title).c-slide--lights-elephant-crane:not(.je-jure-solennellement-que-mes-intention-sont-mauvaises) * {
+  display: none;
+}
+section.stack > section.present.c-slide--lights, section.stack > section.present.c-slide--lights-left,
+section.present:not(.title).c-slide--lights,
+section.present:not(.title).c-slide--lights-left {
+  display: flex !important;
+  justify-content: center;
+  align-items: center;
+  flex-direction: column;
+}
+section.stack > section.present.c-slide--elephant, section.stack > section.present.c-slide--elephant-o,
+section.present:not(.title).c-slide--elephant,
+section.present:not(.title).c-slide--elephant-o {
+  display: flex !important;
+  justify-content: center;
+  align-items: center;
+  flex-direction: column;
+  align-items: flex-start;
+}
+@media (width >= 1024px) {
+  section.stack > section.present.c-slide--elephant, section.stack > section.present.c-slide--elephant-o,
+  section.present:not(.title).c-slide--elephant,
+  section.present:not(.title).c-slide--elephant-o {
+    padding-right: 40%;
+  }
+}
+section.stack > section.present.c-slide--crane-bottom,
+section.present:not(.title).c-slide--crane-bottom {
+  display: flex !important;
+  justify-content: center;
+  align-items: center;
+  flex-direction: column;
+}
+@media (width >= 1024px) {
+  section.stack > section.present.c-slide--crane-bottom,
+  section.present:not(.title).c-slide--crane-bottom {
+    padding-left: 50%;
+  }
+}
+section.stack > section.present.c-slide--crane-left,
+section.present:not(.title).c-slide--crane-left {
+  display: flex !important;
+  justify-content: center;
+  align-items: center;
+  flex-direction: column;
+}
+@media (width >= 1024px) {
+  section.stack > section.present.c-slide--crane-left,
+  section.present:not(.title).c-slide--crane-left {
+    padding-left: 40%;
+  }
+}
+
+@media (width >= 768px) {
+  div.backgrounds .c-slide--lights-elephant-crane {
+    background-image: url("images/background/lights-left.png"), url("images/background/lights-right.png");
+    background-repeat: no-repeat;
+    background-position: 0 100%, 100% 100%;
+    background-size: contain, contain;
+  }
+}
+@media (width >= 1024px) {
+  div.backgrounds .c-slide--lights-elephant-crane {
+    background-image: url("images/background/lights-left.png"), url("images/background/crane.png"), url("images/background/lights-right.png");
+    background-repeat: no-repeat;
+    background-position: 0 100%, 0 100%, 100% 100%;
+    background-size: contain, auto 70%, contain;
+  }
+}
+@media (width > 1200px) {
+  div.backgrounds .c-slide--lights-elephant-crane {
+    background-image: url("images/background/lights-left.png"), url("images/background/elephant.png"), url("images/background/crane.png"), url("images/background/lights-right.png");
+    background-repeat: no-repeat;
+    background-position: 0 100%, 100% 100%, 0 100%, 100% 100%;
+    background-size: contain, contain, auto 70%, contain;
+  }
+}
+
+@media (width >= 768px) {
+  div.backgrounds .c-slide--lights {
+    background-image: url("images/background/lights-left.png"), url("images/background/lights-right.png");
+    background-repeat: no-repeat;
+    background-position: 0 100%, 100% 100%;
+    background-size: contain, contain;
+  }
+}
+
+@media (width >= 768px) {
+  div.backgrounds .c-slide--lights-left {
+    background-image: url("images/background/lights-left.png");
+    background-repeat: no-repeat;
+    background-position: 0 100%;
+    background-size: contain;
+  }
+}
+
+@media (width >= 768px) {
+  div.backgrounds .c-slide--home-kereis {
+    background-image: url("images/background/kereis-home.png");
+    background-repeat: no-repeat;
+    background-position: 0 100%;
+    background-size: contain;
+  }
+}
+
+@media (width >= 768px) {
+  div.backgrounds .c-slide--elephant {
+    background-image: url("images/background/lights-right.png");
+    background-repeat: no-repeat;
+    background-position: 100% 100%;
+    background-size: contain;
+  }
+}
+@media (width >= 1024px) {
+  div.backgrounds .c-slide--elephant {
+    background-image: url("images/background/elephant.png"), url("images/background/lights-right.png");
+    background-repeat: no-repeat;
+    background-position: 100% 100%, 100% 100%;
+    background-size: contain, contain;
+  }
+}
+
+@media (width >= 768px) {
+  div.backgrounds .c-slide--elephant-o {
+    background-image: url("images/background/lights-right.png");
+    background-repeat: no-repeat;
+    background-position: 100% 100%;
+    background-size: contain;
+  }
+}
+@media (width >= 1024px) {
+  div.backgrounds .c-slide--elephant-o {
+    background-image: url("images/background/elephant.png"), url("images/background/o-right.png");
+    background-repeat: no-repeat;
+    background-position: 100% 100%, 100% 100%;
+    background-size: contain, contain;
+  }
+}
+
+@media (width >= 768px) {
+  div.backgrounds .c-slide--crane-bottom {
+    background-image: url("images/background/lights-left.png");
+    background-repeat: no-repeat;
+    background-position: 0 100%;
+    background-size: contain;
+  }
+}
+@media (width >= 1024px) {
+  div.backgrounds .c-slide--crane-bottom {
+    background-image: url("images/background/crane.png"), url("images/background/o-bottom.png");
+    background-repeat: no-repeat;
+    background-position: 5% 100%, 0 100%;
+    background-size: 45% auto, 35% auto;
+  }
+}
+@media (width >= 1300px) {
+  div.backgrounds .c-slide--crane-bottom {
+    background-position: 5% 100%, 0 100%;
+    background-size: auto 70%, 45% auto;
+  }
+}
+
+@media (width >= 768px) {
+  div.backgrounds .c-slide--crane-left {
+    background-image: url("images/background/lights-left.png");
+    background-repeat: no-repeat;
+    background-position: 0 100%;
+    background-size: contain;
+  }
+}
+@media (width >= 1024px) {
+  div.backgrounds .c-slide--crane-left {
+    background-image: url("images/background/crane.png"), url("images/background/o-left.png");
+    background-repeat: no-repeat;
+    background-position: 0 100%, 0 100%;
+    background-size: auto 55%, auto 75%;
+  }
+}
+@media (width >= 1024px) and (width >= 1300px) {
+  div.backgrounds .c-slide--crane-left {
+    background-position: 0 100%, 0 100%;
+    background-size: auto 70%, contain;
+  }
+}
+
+.reveal .slide-number {
+  background-color: #000045;
+}
+.reveal .slide-number a {
+  text-decoration: none;
+  font-size: 1.75rem;
+  color: #9DE6FF;
+}
+
+.reveal .slides > section > section.c-split-slide {
+  top: 0 !important;
+  height: 100%;
+  margin: 0;
+  justify-content: flex-start;
+  padding: 2rem;
+}
+@media (width >= 600px) {
+  .reveal .slides > section > section.c-split-slide {
+    padding: 0;
+    justify-content: center;
+  }
+}
+
+.reveal .c-split-slide .c-split-slide__title p {
+  color: #FBFE7A;
+  text-shadow: none;
+  font-family: "Poppins", sans-serif;
+  margin: 3rem 0 1.5rem 0.5rem;
+  font-size: 3.5rem;
+  font-weight: 800;
+  text-align: start;
+}
+
+.reveal .c-split-slide .c-split-slide__image {
+  position: absolute;
+}
+.reveal .c-split-slide .c-split-slide__image p, .reveal .c-split-slide .c-split-slide__image .image, .reveal .c-split-slide .c-split-slide__image img {
+  display: block;
+  width: 100%;
+  height: 100%;
+  margin: 0;
+}
+.reveal .c-split-slide .c-split-slide__image img {
+  max-width: inherit;
+  max-height: inherit;
+  border: none;
+  background: inherit;
+  box-shadow: inherit;
+}
+
+.reveal .c-split-slide .slide-content {
+  display: flex;
+  justify-content: center;
+  flex-direction: column;
+  height: 50%;
+}
+@media (width >= 600px) {
+  .reveal .c-split-slide .slide-content {
+    height: 100%;
+    padding: 0 2.5rem;
+  }
+}
+@media (width >= 768px) {
+  .reveal .c-split-slide .slide-content {
+    padding: 0 5rem;
+  }
+}
+@media (width >= 1440px) {
+  .reveal .c-split-slide .slide-content {
+    padding: 0 10rem;
+  }
+}
+.reveal .c-split-slide .slide-content p {
+  margin: 0;
+  text-align: start;
+}
+
+@media (width >= 600px) {
+  .reveal .slides > section > section.c-split-slide--slant {
+    align-items: flex-start;
+  }
+}
+
+.reveal .c-split-slide--slant .slide-content {
+  max-height: 50%;
+}
+@media (width >= 600px) {
+  .reveal .c-split-slide--slant .slide-content {
+    max-width: 55%;
+    max-height: 100%;
+  }
+}
+
+.reveal .c-split-slide--slant .c-split-slide__image {
+  right: 0;
+  bottom: 0;
+  left: 0;
+  width: 100%;
+  height: 50%;
+}
+@media (width >= 600px) {
+  .reveal .c-split-slide--slant .c-split-slide__image {
+    top: 0;
+    height: 100%;
+    clip-path: polygon(65% 0, 100% 0, 100% 100%, 55% 100%);
+  }
+}
+
+@media (width >= 600px) {
+  .reveal .slides > section > section.c-split-slide--multi {
+    align-items: flex-end;
+  }
+}
+
+.reveal .c-split-slide--multi .slide-content {
+  max-height: 50%;
+}
+@media (width >= 600px) {
+  .reveal .c-split-slide--multi .slide-content {
+    max-width: 50%;
+    max-height: 100%;
+  }
+}
+
+.reveal .c-split-slide--multi .slide-content > .c-split-slide__image {
+  left: 0;
+  bottom: 0;
+  width: 50%;
+  height: 50%;
+}
+@media (width >= 600px) {
+  .reveal .c-split-slide--multi .slide-content > .c-split-slide__image {
+    bottom: inherit;
+    top: 0;
+  }
+}
+.reveal .c-split-slide--multi .slide-content > .c-split-slide__image ~ .c-split-slide__image {
+  left: inherit;
+  right: 0;
+}
+@media (width >= 600px) {
+  .reveal .c-split-slide--multi .slide-content > .c-split-slide__image ~ .c-split-slide__image {
+    bottom: 0;
+    top: inherit;
+    right: inherit;
+    left: 0;
+  }
+}
+
+.reveal h1 {
+  color: #FBFE7A;
+  text-shadow: none;
+  font-family: "Poppins", sans-serif;
+  font-size: 10vw;
+  font-weight: 800;
+  text-transform: none;
+}
+@media (width >= 768px) {
+  .reveal h1 {
+    font-size: 8vw;
+  }
+}
+@media (width >= 1024px) {
+  .reveal h1 {
+    font-size: 5.7vw;
+  }
+}
+
+.reveal h2 {
+  color: #FBFE7A;
+  text-shadow: none;
+  font-family: "Poppins", sans-serif;
+  font-size: 8vw;
+  font-weight: 800;
+  text-transform: none;
+  text-align: left;
+}
+@media (width >= 400px) {
+  .reveal h2 {
+    font-size: 5vw;
+  }
+}
+@media (width >= 1024px) {
+  .reveal h2 {
+    font-size: 3rem;
+  }
+}
+@media (width >= 1600px) {
+  .reveal h2 {
+    font-size: 4rem;
+  }
+}
+
+.reveal section.c-slide--lights.c-slide--title h2 {
+  text-align: center;
+}
+@media (width >= 1024px) {
+  .reveal section.c-slide--lights.c-slide--title h2 {
+    font-size: 8rem;
+  }
+}
+
+.reveal strong,
+.reveal b {
+  font-weight: 600;
+}
+
+.c-text--sub-title {
+  color: #FBFE7A;
+  text-decoration: underline;
+}
+
+.c-text--credit {
+  margin: 2rem 3rem 0;
+  padding-top: 15rem;
+  font-family: "Poppins", sans-serif;
+  font-size: 2rem;
+  color: #FFFFFF;
+  text-shadow: -0.25rem 0 0.0625rem #271A0F;
+  word-break: break-word;
+}
+
+.reveal a {
+  margin: 0.5rem;
+  font-weight: 700;
+  color: #FBFE7A;
+  text-decoration: underline;
+  text-decoration-color: #FBFE7A;
+}
+.reveal a:hover {
+  color: #FFFFFF;
+}
+
+.reveal p,
+.reveal blockquote,
+.reveal a {
+  font-size: 1rem;
+  text-align: left;
+}
+@media (width >= 768px) {
+  .reveal p,
+  .reveal blockquote,
+  .reveal a {
+    font-size: 1rem;
+  }
+}
+@media (width >= 1024px) {
+  .reveal p,
+  .reveal blockquote,
+  .reveal a {
+    font-size: 1.5rem;
+  }
+}
+@media (width >= 1440px) {
+  .reveal p,
+  .reveal blockquote,
+  .reveal a {
+    font-size: 2rem;
+  }
+}
+
+.reveal section.c-slide--lights p,
+.reveal section.c-slide--lights h2 {
+  text-align: center;
+}
+
+.reveal {
+  background-color: #000045;
+  font-family: "Poppins", sans-serif;
+  color: #FFFFFF;
+}
+
+.u-visually-hidden {
+  width: 1px !important;
+  height: 1px !important;
+  padding: 0 !important;
+  margin: -1px !important;
+  overflow: hidden !important;
+  clip: rect(0, 0, 0, 0) !important;
+  white-space: nowrap !important;
+  border: 0 !important;
+}
+.u-visually-hidden:not(caption) {
+  position: absolute !important;
+}

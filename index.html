@@ -1,0 +1,3292 @@
+<!doctype html>
+<html lang="en">
+
+<head>
+	<meta charset="utf-8">
+
+	<meta name="description" content="Kafka, pourquoi j&#8217;aurais pas dû">
+	<meta name="author" content="Adrien Madouasse">
+
+	<meta name="mobile-web-app-capable" content="yes">
+	<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+  <title>Kereis Tech Day 2025 - Kafka, pourquoi j&#8217;aurais pas dû</title>
+
+	<link rel="stylesheet" href="dist/reset.css">
+	<link rel="stylesheet" href="dist/reveal.css">
+	<link rel="stylesheet" href="dist/theme/league.css" id="theme">
+  <link rel="stylesheet" href="dist/theme/atlantique/styles.css">
+
+	<!-- Theme used for syntax highlighted code -->
+	<link rel="stylesheet" href="plugin/highlight/monokai.css">
+</head>
+
+<body>
+  <div class="reveal">
+    <div class="slides">
+      <section>
+      <section class="title c-slide--home-kereis c-slide--title backgrounds" data-state="title">
+      </section>
+      <section class="title c-slide--lights c-slide--title backgrounds" data-state="title">
+        <h1>Kafka, pourquoi j&#8217;aurais pas dû</h1>
+        <p>Adrien Madouasse - 10/12/2025</p>
+        <div class="preamble">
+          <div class="imageblock c-image--logo-onepoint"><img src="images/onepoint.png" alt="onepoint"></div>
+          <aside class="notes">
+            <div class="ulist">
+              <ul>
+                <li>
+                  <p>Est-ce qu&#8217;il vous est déjà arrivé de tomber sur un outil, une lib, d&#8217;y aller et de
+                    regretter quelques mois plus tard</p>
+                </li>
+                <li>
+                  <p>conf autour de Kafka</p>
+                </li>
+                <li>
+                  <p>Vous en avez sans doute tous entendu parler, probablement en bien, ou pas</p>
+                </li>
+                <li>
+                  <p>Qui a déjà entendu parler de Kafka ? Qui l&#8217;a déjà utilisé ?</p>
+                </li>
+              </ul>
+            </div>
+            <div class="paragraph">
+              <p>Je vais entrer dans le détail avec vous, et je vais vous expliquer pourquoi, d&#8217;après une
+                expérience que j&#8217;ai vécu, son utilisation n&#8217;est pas toujours évidente</p>
+            </div>
+            <div class="ulist">
+              <ul>
+                <li>
+                  <p>Je ne vais pas parler de :</p>
+                  <div class="ulist">
+                    <ul>
+                      <li>
+                        <p>implem kafka / installation</p>
+                      </li>
+                      <li>
+                        <p>écosystème</p>
+                      </li>
+                    </ul>
+                  </div>
+                </li>
+              </ul>
+            </div>
+            <div class="paragraph">
+              <p>Transition pour me présenter</p>
+            </div>
+          </aside>
+        </div>
+      </section>
+        <section id="_pour_commencer" class="c-slide--lights c-slide--title backgrounds">
+          <h2>Pour commencer</h2>
+        </section>
+        <section id="_a_propos_de_moi" class="c-slide--elephant-o backgrounds">
+          <div class="slide-content">
+            <div class="paragraph c-category">
+              <p>Intro</p>
+            </div>
+            <div class="ulist">
+              <ul>
+                <li>
+                  <p><strong>Adrien Madouasse</strong></p>
+                  <div class="ulist">
+                    <ul>
+                      <li>
+                        <p>Lead tech</p>
+                      </li>
+                      <li>
+                        <p>Java</p>
+                      </li>
+                      <li>
+                        <p>Architecture applicative</p>
+                      </li>
+                      <li>
+                        <p>Microservices</p>
+                      </li>
+                      <li>
+                        <p>Chez Onepoint depuis 2022</p>
+                      </li>
+                    </ul>
+                  </div>
+                </li>
+              </ul>
+            </div>
+            <aside class="notes">
+              <div class="ulist">
+                <ul>
+                  <li>
+                    <p>spring boot</p>
+                  </li>
+                  <li>
+                    <p><strong>Transition :</strong> et Kafka&#8230;&#8203;</p>
+                  </li>
+                </ul>
+              </div>
+            </aside>
+          </div>
+        </section>
+        <section id="_de_quoi_on_va_parler" class="c-slide--elephant-o backgrounds">
+          <div class="slide-content">
+            <div class="paragraph c-category">
+              <p>Intro</p>
+            </div>
+            <div class="ulist">
+              <ul>
+                <li>
+                  <p><strong>Kafka ?</strong></p>
+                  <div class="ulist">
+                    <ul>
+                      <li>
+                        <p>🤔 Microservices, synchrone, asynchrone ?</p>
+                      </li>
+                      <li>
+                        <p>📨 Apache Kafka</p>
+                      </li>
+                      <li>
+                        <p>☠️😥☠️ Pièges</p>
+                      </li>
+                    </ul>
+                  </div>
+                </li>
+              </ul>
+            </div>
+            <aside class="notes">
+              <div class="ulist">
+                <ul>
+                  <li>
+                    <p>Je vais vous parler de :</p>
+                  </li>
+                  <li>
+                    <p>Mots qui font parfois peur : Microservices, synchrone, asynchrone</p>
+                  </li>
+                  <li>
+                    <p>choix de Kafka pour diffusion de messages, sa découverte</p>
+                  </li>
+                  <li>
+                    <p>Et de la souffrance qui en a découlé</p>
+                  </li>
+                  <li>
+                    <p>Pas de solution magique</p>
+                  </li>
+                  <li>
+                    <p><strong>Transition :</strong> Mais d&#8217;abord, posons le contexte &#8658; refonte sites
+                      ecommerce</p>
+                  </li>
+                </ul>
+              </div>
+            </aside>
+          </div>
+        </section>
+      </section>
+      <section>
+        <section id="_tout_commença_par_une_refonte" class="c-slide--lights c-slide--title backgrounds">
+          <h2>Tout commença par une refonte</h2>
+          <div class="slide-content">
+            <aside class="notes">
+              <div class="paragraph">
+                <p>top <strong>2min</strong></p>
+              </div>
+            </aside>
+          </div>
+        </section>
+        <section id="_refonte_de_sites_e_commerce">
+          <h2>Refonte de sites e-commerce</h2>
+          <div class="slide-content">
+            <div class="paragraph c-category">
+              <p>Le besoin</p>
+            </div>
+            <div class="paragraph">
+              <p>Permettre aux clients de commander en toute autonomie et à n&#8217;importe quelle heure</p>
+            </div>
+            <aside class="notes">
+              <div class="ulist">
+                <ul>
+                  <li>
+                    <p>en une phrase, le client voulait&#8230;&#8203;</p>
+                  </li>
+                  <li>
+                    <p>but était de moderniser cette partie du SI</p>
+                  </li>
+                  <li>
+                    <p>Transition : avec pour objectifs</p>
+                  </li>
+                </ul>
+              </div>
+            </aside>
+          </div>
+        </section>
+        <section id="_refonte_de_sites_e_commerce_2">
+          <h2>Refonte de sites e-commerce</h2>
+          <div class="slide-content">
+            <div class="paragraph c-category">
+              <p>Le besoin</p>
+            </div>
+            <div class="ulist">
+              <ul>
+                <li>
+                  <p><strong>Objectifs</strong></p>
+                  <div class="ulist">
+                    <ul>
+                      <li>
+                        <p>Une plateforme évolutive et adaptable</p>
+                      </li>
+                      <li>
+                        <p>Haute disponibilité</p>
+                      </li>
+                      <li>
+                        <p>Tolérance à la panne</p>
+                      </li>
+                      <li>
+                        <p>Des fonctionnalités utilisables par d&#8217;autres applications</p>
+                      </li>
+                    </ul>
+                  </div>
+                </li>
+              </ul>
+            </div>
+            <aside class="notes">
+              <div class="ulist">
+                <ul>
+                  <li>
+                    <p>évolution sans crainte de tout casser</p>
+                  </li>
+                  <li>
+                    <p>elasticité, adapter en fonction de l&#8217;utilisation &#8658; $ coût $</p>
+                  </li>
+                  <li>
+                    <p>toujours dispo ou presque, on n&#8217;est pas à l&#8217;abrit d&#8217;un incident extérieur</p>
+                  </li>
+                  <li>
+                    <p>Transition : pour faire cela &#8230;&#8203;</p>
+                  </li>
+                </ul>
+              </div>
+            </aside>
+          </div>
+        </section>
+        <section id="_microservices">
+          <h2><strong>Microservices</strong></h2>
+          <div class="slide-content">
+            <div class="paragraph c-category">
+              <p>Le besoin</p>
+            </div>
+            <div class="imageblock fragment"><img src="images/php-logo.png" alt="php"></div>
+            <div class="imageblock fragment"><img src="images/spring-boot-logo.png" alt="spring boot"></div>
+            <aside class="notes">
+              <div class="ulist">
+                <ul>
+                  <li>
+                    <p>étant donné la richesse fonctionnelle et les objectifs</p>
+                  </li>
+                  <li>
+                    <p>les architectes à l&#8217;oeuvre à l&#8217;époque ont choisi</p>
+                  </li>
+                  <li>
+                    <p>des sites web en php, et des back Java pour les servir avec des API REST</p>
+                  </li>
+                  <li>
+                    <p>Transition : avant d&#8217;aller plus loin, et de vous embarquer dans Kafka, je vais déjà poser
+                      quelques concepts &#8230;&#8203;</p>
+                  </li>
+                </ul>
+              </div>
+            </aside>
+          </div>
+        </section>
+      </section>
+      <section>
+        <section id="_quelques_concepts" class="c-slide--lights c-slide--title backgrounds">
+          <h2>Quelques concepts</h2>
+          <div class="slide-content">
+            <aside class="notes">
+              <div class="paragraph">
+                <p>top <strong>4min</strong></p>
+              </div>
+            </aside>
+          </div>
+        </section>
+        <section id="_microservices_2">
+          <h2>Microservices</h2>
+          <div class="slide-content">
+            <div class="paragraph c-category">
+              <p>Concepts</p>
+            </div>
+            <div class="imageblock"><img src="images/microservices.png" alt="Microservices"></div>
+            <div class="ulist">
+              <ul>
+                <li>
+                  <p>Petites applications <strong>autonomes</strong></p>
+                </li>
+                <li>
+                  <p>Périmètre fonctionnel clair et réduit</p>
+                </li>
+              </ul>
+            </div>
+            <aside class="notes">
+              <div class="ulist">
+                <ul>
+                  <li>
+                    <p>Architecture modulaire / composant</p>
+                  </li>
+                  <li>
+                    <p>Autonome</p>
+                    <div class="ulist">
+                      <ul>
+                        <li>
+                          <p>Traitements</p>
+                        </li>
+                        <li>
+                          <p>Données</p>
+                        </li>
+                      </ul>
+                    </div>
+                  </li>
+                  <li>
+                    <p>Transition : ça présente plusieurs avantages</p>
+                  </li>
+                </ul>
+              </div>
+            </aside>
+          </div>
+        </section>
+        <section id="_microservices_3">
+          <h2>Microservices</h2>
+          <div class="slide-content">
+            <div class="paragraph c-category">
+              <p>Concepts</p>
+            </div>
+            <div class="ulist">
+              <ul>
+                <li>
+                  <p>✅</p>
+                </li>
+                <li>
+                  <p>Faible adhérence entre les services</p>
+                </li>
+                <li>
+                  <p>Tolérance à la panne</p>
+                </li>
+                <li>
+                  <p>Déployable indépendamment</p>
+                </li>
+                <li>
+                  <p>Gestion fine des resources machine</p>
+                </li>
+                <li>
+                  <p>Nombre d&#8217;instances adaptable</p>
+                </li>
+              </ul>
+            </div>
+            <aside class="notes">
+              <div class="ulist">
+                <ul>
+                  <li>
+                    <p>faible adhérence, couplage faible = plus autonome &#8658; meilleure tolérance à la panne</p>
+                  </li>
+                  <li>
+                    <p>déploiements plus petits, plus réguliers = on a pas peur des MEP, moins peur</p>
+                  </li>
+                  <li>
+                    <p>ressources machine : + optimisé que monolithe</p>
+                  </li>
+                  <li>
+                    <p>Transition : mais il y a aussi le revers de la médaille&#8230;&#8203;</p>
+                  </li>
+                </ul>
+              </div>
+            </aside>
+          </div>
+        </section>
+        <section id="_microservices_4">
+          <h2>Microservices</h2>
+          <div class="slide-content">
+            <div class="paragraph c-category">
+              <p>Concepts</p>
+            </div>
+            <div class="ulist">
+              <ul>
+                <li>
+                  <p>😵‍💫🔀</p>
+                </li>
+                <li>
+                  <p>Système distribué plus difficile à comprendre</p>
+                </li>
+                <li>
+                  <p>Échange plus complexe</p>
+                </li>
+                <li>
+                  <p>Transactions distribuées</p>
+                </li>
+                <li>
+                  <p>Gestion des erreurs</p>
+                </li>
+              </ul>
+            </div>
+            <aside class="notes">
+              <div class="ulist">
+                <ul>
+                  <li>
+                    <p>..</p>
+                  </li>
+                  <li>
+                    <p>..</p>
+                  </li>
+                  <li>
+                    <p>erreur en distribué</p>
+                  </li>
+                  <li>
+                    <p>une maintenance plus difficile</p>
+                  </li>
+                  <li>
+                    <p>Complexe à versionner et livrer</p>
+                  </li>
+                  <li>
+                    <p><strong>BOIRE</strong></p>
+                  </li>
+                  <li>
+                    <p><strong>Transition :</strong> on voit ce que c&#8217;est un microservices, bons et mauvais côtés
+                    </p>
+                  </li>
+                  <li>
+                    <p>mais il faut quand même qu&#8217;on parle d&#8217;une chose&#8230;&#8203;</p>
+                  </li>
+                </ul>
+              </div>
+            </aside>
+          </div>
+        </section>
+        <section id="_communication">
+          <h2><strong>Communication</strong></h2>
+          <div class="slide-content">
+            <div class="paragraph c-category">
+              <p>Concepts</p>
+            </div>
+            <div class="paragraph">
+              <p>📣</p>
+            </div>
+            <aside class="notes">
+              <div class="ulist">
+                <ul>
+                  <li>
+                    <p>Comment faire communiquer tout ça</p>
+                  </li>
+                  <li>
+                    <p>problème à résoudre</p>
+                  </li>
+                  <li>
+                    <p>2 types : synchrone, asynchrone</p>
+                  </li>
+                  <li>
+                    <p>Transition : on commence par le plus simple, le classique&#8230;&#8203;</p>
+                  </li>
+                </ul>
+              </div>
+            </aside>
+          </div>
+        </section>
+        <section id="_synchrone">
+          <h2><strong>Synchrone</strong></h2>
+          <div class="slide-content">
+            <div class="paragraph c-category">
+              <p>Concepts</p>
+            </div>
+            <div class="imageblock"><img src="images/client-server.png" alt="client -> serveur"></div>
+            <div class="ulist">
+              <ul>
+                <li>
+                  <p>Appel bloquant</p>
+                </li>
+              </ul>
+            </div>
+            <aside class="notes">
+              <div class="ulist">
+                <ul>
+                  <li>
+                    <p>Le classique client/serveur</p>
+                  </li>
+                  <li>
+                    <p>http, requête navigateur web, attent réponse du serveur</p>
+                  </li>
+                  <li>
+                    <p>Transition : risque..</p>
+                  </li>
+                </ul>
+              </div>
+            </aside>
+          </div>
+        </section>
+        <section id="_synchrone_2">
+          <h2><strong>Synchrone</strong></h2>
+          <div class="slide-content">
+            <div class="paragraph c-category">
+              <p>Concepts</p>
+            </div>
+            <div class="imageblock"><img src="images/client-server-ko.png" alt="client -x-> serveur"></div>
+            <div class="ulist">
+              <ul>
+                <li>
+                  <p>Appel bloquant</p>
+                </li>
+              </ul>
+            </div>
+            <aside class="notes">
+              <div class="ulist">
+                <ul>
+                  <li>
+                    <p>risque</p>
+                    <div class="ulist">
+                      <ul>
+                        <li>
+                          <p>indispo du serveur</p>
+                        </li>
+                        <li>
+                          <p>perte de requête</p>
+                        </li>
+                        <li>
+                          <p>ça ne garantit pas l&#8217;indépendance qu&#8217;on recherche</p>
+                        </li>
+                      </ul>
+                    </div>
+                  </li>
+                  <li>
+                    <p>Transition : à l&#8217;inverse du synchrone, on a&#8230;&#8203;</p>
+                  </li>
+                </ul>
+              </div>
+            </aside>
+          </div>
+        </section>
+        <section id="_asynchrone">
+          <h2><strong>Asynchrone</strong></h2>
+          <div class="slide-content">
+            <div class="paragraph c-category">
+              <p>Concepts</p>
+            </div>
+            <div class="imageblock"><img src="images/async.png" alt="Emetteur --> (I) --> Consommateur"></div>
+            <div class="ulist">
+              <ul>
+                <li>
+                  <p>Appel non-bloquant</p>
+                </li>
+              </ul>
+            </div>
+            <aside class="notes">
+              <div class="ulist">
+                <ul>
+                  <li>
+                    <p>On sépare émetteur et consommateur, on peut comparer ça à deux personnes qui ne peuvent pas se
+                      voir</p>
+                  </li>
+                  <li>
+                    <p>Intermédiaire qui va réceptionner les messages et les fournir au consommateur</p>
+                  </li>
+                  <li>
+                    <p>En plus, pas d&#8217;attente &#8658; appel non-bloquant</p>
+                  </li>
+                  <li>
+                    <p>Transition : Donc ça nous garantit&#8230;&#8203;</p>
+                  </li>
+                </ul>
+              </div>
+            </aside>
+          </div>
+        </section>
+        <section id="_asynchrone_2">
+          <h2><strong>Asynchrone</strong></h2>
+          <div class="slide-content">
+            <div class="paragraph c-category">
+              <p>Concepts</p>
+            </div>
+            <div class="ulist">
+              <ul>
+                <li>
+                  <p>✅</p>
+                </li>
+                <li>
+                  <p>Indépendance</p>
+                </li>
+                <li>
+                  <p>Indisponibilité du consommateur ?</p>
+                </li>
+              </ul>
+            </div>
+            <aside class="notes">
+              <div class="ulist">
+                <ul>
+                  <li>
+                    <p>indépendance : application plus tolérante à la panne des autres</p>
+                  </li>
+                  <li>
+                    <p>on pose le message quelque part, il sera consommé&#8230;&#8203; quand il sera consommé</p>
+                  </li>
+                  <li>
+                    <p>et si on consommateur indispo ? ce n&#8217;est pas un souci pour l&#8217;émetteur</p>
+                  </li>
+                  <li>
+                    <p>en comparant avec le client / serveur, c&#8217;est comme si le serveur n&#8217;est pas dispo,
+                      mais dans ce cas ça pose moins de problème</p>
+                  </li>
+                  <li>
+                    <p>Transition : dans notre contexte, c&#8217;est ce qu&#8217;on veut&#8230;&#8203;</p>
+                  </li>
+                </ul>
+              </div>
+            </aside>
+          </div>
+        </section>
+        <section id="_asynchrone_3">
+          <h2><strong>Asynchrone</strong></h2>
+          <div class="slide-content">
+            <div class="paragraph c-category">
+              <p>Concepts</p>
+            </div>
+            <div class="ulist">
+              <ul>
+                <li>
+                  <p><strong>C&#8217;est ce qu&#8217;on veut</strong></p>
+                  <div class="ulist">
+                    <ul>
+                      <li class="fragment">
+                        <p>Diffusion de données de référence</p>
+                      </li>
+                      <li class="fragment">
+                        <p>Transactions distribuées</p>
+                      </li>
+                    </ul>
+                  </div>
+                </li>
+              </ul>
+            </div>
+            <aside class="notes">
+              <div class="ulist">
+                <ul>
+                  <li>
+                    <p>Deux cas d&#8217;usage</p>
+                    <div class="ulist">
+                      <ul>
+                        <li>
+                          <p>Diffusion interne et externe à la plateforme : création / modif &#8658; ordre des message,
+                            pour mise à jour de donnée</p>
+                        </li>
+                        <li>
+                          <p>transaction : panier, paiement</p>
+                        </li>
+                      </ul>
+                    </div>
+                  </li>
+                  <li>
+                    <p>Transition : sur un schéma&#8230;&#8203;</p>
+                  </li>
+                </ul>
+              </div>
+            </aside>
+          </div>
+        </section>
+        <section id="_asynchrone_4">
+          <h2><strong>Asynchrone</strong></h2>
+          <div class="slide-content">
+            <div class="paragraph c-category">
+              <p>Concepts</p>
+            </div>
+            <div class="imageblock"><img src="images/microservices-mom.png"
+                alt="Communication asynchrone entre microservices"></div>
+            <aside class="notes">
+              <div class="ulist">
+                <ul>
+                  <li>
+                    <p>Transition : pour faire ça, on utilise un&#8230;&#8203;</p>
+                  </li>
+                </ul>
+              </div>
+            </aside>
+          </div>
+        </section>
+        <section id="_message_oriented_middleware">
+          <h2><strong>Message oriented middleware</strong></h2>
+          <div class="slide-content">
+            <div class="paragraph c-category">
+              <p>Concepts</p>
+            </div>
+            <div class="ulist">
+              <ul>
+                <li class="fragment">
+                  <p>Intergiciel orienté message</p>
+                </li>
+                <li class="fragment">
+                  <p>Intermédiaire</p>
+                </li>
+              </ul>
+            </div>
+            <div class="ulist">
+              <ul>
+                <li class="fragment">
+                  <p>🤗 Réception</p>
+                </li>
+                <li class="fragment">
+                  <p>🗃️ Stockage</p>
+                </li>
+                <li class="fragment">
+                  <p>🌋 Diffusion</p>
+                </li>
+              </ul>
+            </div>
+            <aside class="notes">
+              <div class="ulist">
+                <ul>
+                  <li>
+                    <p>certains disent peut-être "Intergiciel .." traduction rigolote</p>
+                  </li>
+                  <li>
+                    <p>comme on l&#8217;a dit, archi microservices a besoin de diffusion de messages en asynchrone et
+                      donc d&#8217;un intermédiaire pour&#8230;&#8203;</p>
+                  </li>
+                  <li>
+                    <p>Transition : quand on dit MOM, tout le monde dit&#8230;&#8203;</p>
+                  </li>
+                </ul>
+              </div>
+            </aside>
+          </div>
+        </section>
+      </section>
+      <section>
+        <section id="_apache_kafka" class="c-slide--lights c-slide--title backgrounds">
+          <h2>Apache Kafka</h2>
+          <div class="slide-content">
+            <div class="imageblock"><img src="images/kafka-logo.png" alt="Kafka"></div>
+            <aside class="notes">
+              <div class="ulist">
+                <ul>
+                  <li>
+                    <p>top <strong>10min</strong></p>
+                  </li>
+                  <li>
+                    <p><strong>BOIRE</strong></p>
+                  </li>
+                  <li>
+                    <p>Pourquoi Kafka ? Ca coche les cases</p>
+                  </li>
+                  <li>
+                    <p>Les alternatives ? Certainement pas adaptées à notre besoin ! On a de grandes ambitions</p>
+                  </li>
+                  <li>
+                    <p>on a le contexte, parlons Kafka pour voir les merveilleuses fonctionnalités pour répondre à nos
+                      ambitions</p>
+                  </li>
+                  <li>
+                    <p>Transition : déjà, d&#8217;où ça vient ?</p>
+                  </li>
+                </ul>
+              </div>
+            </aside>
+          </div>
+        </section>
+        <section id="_origine">
+          <h2>Origine</h2>
+          <div class="slide-content">
+            <div class="paragraph c-category">
+              <p>Apache Kafka</p>
+            </div>
+            <div class="imageblock"><img src="images/linkedin-logo.png" alt="LinkedIn"></div>
+            <div class="ulist">
+              <ul>
+                <li class="fragment">
+                  <p>Diffusion d&#8217;un très gros volume de données</p>
+                </li>
+                <li class="fragment">
+                  <p>Limitation sur leur système de l&#8217;époque</p>
+                </li>
+                <li class="fragment">
+                  <p>Fondation Apache depuis 2012</p>
+                </li>
+              </ul>
+            </div>
+            <aside class="notes">
+              <div class="ulist">
+                <ul>
+                  <li>
+                    <p>Tout le monde connaît LinkedIn</p>
+                  </li>
+                  <li>
+                    <p>Ils avaient une problématique &#8230;&#8203;</p>
+                  </li>
+                  <li>
+                    <p>Création en 2010</p>
+                  </li>
+                  <li>
+                    <p><strong>Transition :</strong> les promesses ?</p>
+                  </li>
+                </ul>
+              </div>
+            </aside>
+          </div>
+        </section>
+        <section id="_caractéristiques">
+          <h2>Caractéristiques</h2>
+          <div class="slide-content">
+            <div class="paragraph c-category">
+              <p>Apache Kafka</p>
+            </div>
+            <div class="ulist">
+              <ul>
+                <li>
+                  <p>Haut débit</p>
+                </li>
+                <li>
+                  <p>Adaptable</p>
+                </li>
+                <li>
+                  <p>Stockage</p>
+                </li>
+                <li>
+                  <p>Haute disponibilité</p>
+                </li>
+              </ul>
+            </div>
+            <aside class="notes">
+              <div class="ulist">
+                <ul>
+                  <li>
+                    <p>se décrit</p>
+                    <div class="ulist">
+                      <ul>
+                        <li>
+                          <p>High Throughput, traitements temps réel, avec une faible latence, ça va vite</p>
+                        </li>
+                        <li>
+                          <p>Scalable, s&#8217;adapte, encaisse grosse volumétrie, plusieurs milliards</p>
+                        </li>
+                        <li>
+                          <p>Permanent storage, stocke messages sur disque, durée limitée</p>
+                        </li>
+                        <li>
+                          <p>High availability, répartition messages sur serveurs, brokers</p>
+                        </li>
+                      </ul>
+                    </div>
+                  </li>
+                  <li>
+                    <p>Encaisse de grosses charges</p>
+                  </li>
+                  <li>
+                    <p><strong>Transition :</strong> en quelques mots&#8230;&#8203;</p>
+                  </li>
+                </ul>
+              </div>
+            </aside>
+          </div>
+        </section>
+        <section id="_en_quelques_mots">
+          <h2>En quelques mots</h2>
+          <div class="slide-content">
+            <div class="paragraph c-category">
+              <p>Apache Kafka</p>
+            </div>
+            <div class="ulist">
+              <ul>
+                <li class="fragment">
+                  <p>Diffusion de messages</p>
+                </li>
+                <li class="fragment">
+                  <p>Producteur</p>
+                </li>
+                <li class="fragment">
+                  <p>Topic</p>
+                </li>
+                <li class="fragment">
+                  <p>Consommateur</p>
+                </li>
+                <li class="fragment">
+                  <p>Broker</p>
+                </li>
+              </ul>
+            </div>
+            <aside class="notes">
+              <div class="ulist">
+                <ul>
+                  <li>
+                    <p>Avant de donner plus de détails</p>
+                  </li>
+                  <li>
+                    <p>topic : contenant intermédiaire pour les messages</p>
+                  </li>
+                  <li>
+                    <p>broker : serveur / noeuds qui hébergent les topics</p>
+                  </li>
+                  <li>
+                    <p><strong>Transition :</strong> on a les acteurs, mais un peu plus concrètement avec un
+                      schéma&#8230;&#8203;</p>
+                  </li>
+                </ul>
+              </div>
+            </aside>
+          </div>
+        </section>
+        <section id="_simplement">
+          <h2>Simplement</h2>
+          <div class="slide-content">
+            <div class="paragraph c-category">
+              <p>Apache Kafka</p>
+            </div>
+            <div class="imageblock"><img src="images/kafka-one-to-one-simple.png"
+                alt="producer and consumer - one to one"></div>
+            <aside class="notes">
+              <div class="olist arabic">
+                <ol class="arabic">
+                  <li>
+                    <p>Production</p>
+                  </li>
+                  <li>
+                    <p>Réception, stockage</p>
+                  </li>
+                  <li>
+                    <p>Abonnement, consommation</p>
+                  </li>
+                </ol>
+              </div>
+              <div class="paragraph">
+                <p><strong>Transition :</strong> si on rentre plus dans le détail pour chacun</p>
+              </div>
+            </aside>
+          </div>
+        </section>
+        <section id="_producteur">
+          <h2>Producteur</h2>
+          <div class="slide-content">
+            <div class="paragraph c-category">
+              <p>Apache Kafka</p>
+            </div>
+            <div class="imageblock"><img src="images/producer.png" alt="Producteur publie un message vers Kafka"></div>
+            <aside class="notes">
+              <div class="ulist">
+                <ul>
+                  <li>
+                    <p>application qui produit / publie des messages</p>
+                  </li>
+                  <li>
+                    <p>ne connaît pas ses consommateurs</p>
+                  </li>
+                  <li>
+                    <p><strong>Transition :</strong> l&#8217;application produit un message&#8230;&#8203;</p>
+                  </li>
+                </ul>
+              </div>
+            </aside>
+          </div>
+        </section>
+        <section id="_message">
+          <h2>✉️ Message</h2>
+          <div class="slide-content">
+            <div class="paragraph c-category">
+              <p>Apache Kafka</p>
+            </div>
+            <div class="ulist">
+              <ul>
+                <li class="fragment">
+                  <p>Aka : événement, log</p>
+                </li>
+                <li class="fragment">
+                  <p>En-tête + contenu</p>
+                </li>
+                <li class="fragment">
+                  <p>Clé</p>
+                </li>
+                <li class="fragment">
+                  <p>Publié dans un topic</p>
+                </li>
+              </ul>
+            </div>
+            <aside class="notes">
+              <div class="ulist">
+                <ul>
+                  <li>
+                    <p>trace, écrit dans kafka, un événement</p>
+                    <div class="ulist">
+                      <ul>
+                        <li>
+                          <p>ex : évt connexion utilisateur, position gps, paiement, etc.</p>
+                        </li>
+                      </ul>
+                    </div>
+                  </li>
+                  <li>
+                    <p>composé d&#8217;entête = métadonnées, charge utile &#8230;&#8203;</p>
+                  </li>
+                  <li>
+                    <p>(clé plus tard) ex : id utilisateur</p>
+                  </li>
+                  <li>
+                    <p>publié dans un topic pour catégoriser</p>
+                  </li>
+                  <li>
+                    <p><strong>Transition :</strong> Et un topic, c&#8217;est &#8230;&#8203;</p>
+                  </li>
+                </ul>
+              </div>
+            </aside>
+          </div>
+        </section>
+        <section id="_topic">
+          <h2>Topic</h2>
+          <div class="slide-content">
+            <div class="paragraph c-category">
+              <p>Apache Kafka</p>
+            </div>
+            <div class="ulist">
+              <ul>
+                <li>
+                  <p>Sujet de l&#8217;abonnement</p>
+                </li>
+                <li>
+                  <p>Contient un type de messages</p>
+                </li>
+                <li>
+                  <p>🗃️ Stockage</p>
+                </li>
+                <li>
+                  <p>⏳ Durée de rétention</p>
+                </li>
+              </ul>
+            </div>
+            <aside class="notes">
+              <div class="ulist">
+                <ul>
+                  <li>
+                    <p>abonnement à un magazine sur le tricot, on ne veut pas recevoir de la F1</p>
+                  </li>
+                  <li>
+                    <p>stockage pour une durée définie</p>
+                  </li>
+                  <li>
+                    <p>Exemple :</p>
+                    <div class="ulist">
+                      <ul>
+                        <li>
+                          <p>connexion utilisateur</p>
+                        </li>
+                        <li>
+                          <p>métrique (T°, pression, etc.)</p>
+                        </li>
+                        <li>
+                          <p>transaction de paiement</p>
+                        </li>
+                        <li>
+                          <p>création d&#8217;un utilisateur, d&#8217;un produit</p>
+                        </li>
+                        <li>
+                          <p>etc.</p>
+                        </li>
+                      </ul>
+                    </div>
+                  </li>
+                  <li>
+                    <p><strong>Transition :</strong> Et tout ça pour fournir les messages au &#8230;&#8203;</p>
+                  </li>
+                </ul>
+              </div>
+            </aside>
+          </div>
+        </section>
+        <section id="_consommateur">
+          <h2>Consommateur</h2>
+          <div class="slide-content">
+            <div class="paragraph c-category">
+              <p>Apache Kafka</p>
+            </div>
+            <div class="imageblock"><img src="images/consumer.png"
+                alt="Consommateur récupère des messages depuis Kafka"></div>
+            <div class="ulist">
+              <ul>
+                <li>
+                  <p>Traitement</p>
+                </li>
+                <li>
+                  <p>Acquittement</p>
+                </li>
+                <li>
+                  <p>Back-pressure</p>
+                </li>
+              </ul>
+            </div>
+            <aside class="notes">
+              <div class="ulist">
+                <ul>
+                  <li>
+                    <p>Je le rappelle, il ne connaît pas l&#8217;émetteur du message, il ne connaît que Kafka (broker)
+                    </p>
+                  </li>
+                  <li>
+                    <p>Va récupérer les messages auprès du broker</p>
+                  </li>
+                  <li>
+                    <p>A son rythme</p>
+                  </li>
+                  <li>
+                    <p>Transition : si on récapitule&#8230;&#8203;</p>
+                  </li>
+                </ul>
+              </div>
+            </aside>
+          </div>
+        </section>
+        <section id="_simplement_2">
+          <h2>Simplement</h2>
+          <div class="slide-content">
+            <div class="paragraph c-category">
+              <p>Apache Kafka</p>
+            </div>
+            <div class="imageblock"><img src="images/kafka-one-to-one-simple.png"
+                alt="producer and consumer - one to one"></div>
+            <aside class="notes">
+              <div class="ulist">
+                <ul>
+                  <li>
+                    <p><strong>BOIRE</strong></p>
+                  </li>
+                  <li>
+                    <p>on a vu comment publier un message dans topic, pour qu&#8217;il soit ensuite consommé</p>
+                  </li>
+                  <li>
+                    <p><strong>Transition :</strong> mais je me pose une question :</p>
+                    <div class="ulist">
+                      <ul>
+                        <li>
+                          <p><strong>savoir si un message a déjà été consommé ?</strong></p>
+                        </li>
+                        <li>
+                          <p>pour comprendre, je dois vous parler de&#8230;&#8203;</p>
+                        </li>
+                      </ul>
+                    </div>
+                  </li>
+                </ul>
+              </div>
+            </aside>
+          </div>
+        </section>
+        <section id="_offset">
+          <h2>Offset</h2>
+          <div class="slide-content">
+            <div class="paragraph c-category">
+              <p>Apache Kafka</p>
+            </div>
+            <div class="imageblock"><img src="images/kafka-offset.png" alt="offset des messages d'un topic"></div>
+            <aside class="notes">
+              <div class="ulist">
+                <ul>
+                  <li>
+                    <p>Qu&#8217;est-ce que c&#8217;est ?</p>
+                  </li>
+                  <li>
+                    <p>Position du messages dans le topic</p>
+                  </li>
+                  <li>
+                    <p>Entier incrémenté à chaque message publié dans le topic</p>
+                  </li>
+                  <li>
+                    <p>Conserve l'<strong>ordre d&#8217;arrivée</strong></p>
+                  </li>
+                  <li>
+                    <p><strong>Transition :</strong> du point de vue conso</p>
+                  </li>
+                </ul>
+              </div>
+            </aside>
+          </div>
+        </section>
+        <section id="_offset_2">
+          <h2>Offset</h2>
+          <div class="slide-content">
+            <div class="paragraph c-category">
+              <p>Apache Kafka</p>
+            </div>
+            <div class="imageblock"><img src="images/kafka-offset-one-consumer.png" alt="offset sur un consommateur">
+            </div>
+            <aside class="notes">
+              <div class="ulist">
+                <ul>
+                  <li>
+                    <p>Le broker conserve la position du consommateur dans le topic</p>
+                  </li>
+                  <li>
+                    <p>Conso demande prochain message</p>
+                  </li>
+                  <li>
+                    <p><strong>Transition :</strong> mais je me pose encore une question :</p>
+                    <div class="ulist">
+                      <ul>
+                        <li>
+                          <p><strong>un même message consommé par plusieurs applications ?</strong></p>
+                        </li>
+                      </ul>
+                    </div>
+                  </li>
+                </ul>
+              </div>
+            </aside>
+          </div>
+        </section>
+        <section id="_offset_3">
+          <h2>Offset</h2>
+          <div class="slide-content">
+            <div class="paragraph c-category">
+              <p>Apache Kafka</p>
+            </div>
+            <div class="imageblock"><img src="images/kafka-offset-two-consumers.png"
+                alt="offset sur deux consommateurs"></div>
+            <aside class="notes">
+              <div class="ulist">
+                <ul>
+                  <li>
+                    <p>&#8230;&#8203; sur l&#8217;offset aussi</p>
+                  </li>
+                  <li>
+                    <p>Pour chaque application consommatrice, position dans le topic</p>
+                  </li>
+                  <li>
+                    <p>Un message est bien diffusé une fois à chaque app consommatrice</p>
+                  </li>
+                  <li>
+                    <p><strong>Transition :</strong> maintenant ajoutons un peu de détail sur les échanges&#8230;&#8203;
+                    </p>
+                  </li>
+                </ul>
+              </div>
+            </aside>
+          </div>
+        </section>
+        <section id="_moins_simplement">
+          <h2>Moins simplement</h2>
+          <div class="slide-content">
+            <div class="paragraph c-category">
+              <p>Apache Kafka</p>
+            </div>
+            <div class="imageblock"><img src="images/kafka-one-to-one-poll-ack.png"
+                alt="producer and consumer - one to one - poll and ack"></div>
+            <aside class="notes">
+              <div class="ulist">
+                <ul>
+                  <li>
+                    <p>Je ne m&#8217;étend pas sur production et stockage de messages</p>
+                  </li>
+                  <li>
+                    <p>Consommateur demande les N prochains messages, en fonction de son offset</p>
+                  </li>
+                  <li>
+                    <p>Récupère, traite</p>
+                  </li>
+                  <li>
+                    <p><strong>Acquittement</strong></p>
+                  </li>
+                  <li>
+                    <p>avance offset pour le consommateur</p>
+                  </li>
+                  <li>
+                    <p><strong>BOIRE</strong></p>
+                  </li>
+                  <li>
+                    <p><strong>Transition :</strong> mais si je veux adapter mon nombre d&#8217;instance&#8230;&#8203;
+                    </p>
+                  </li>
+                </ul>
+              </div>
+            </aside>
+          </div>
+        </section>
+        <section id="_plusieurs_instances">
+          <h2>Plusieurs instances ?</h2>
+          <div class="slide-content">
+            <div class="paragraph c-category">
+              <p>Apache Kafka</p>
+            </div>
+            <aside class="notes">
+              <div class="ulist">
+                <ul>
+                  <li>
+                    <p>comment je fais pour avoir plusieurs instances d&#8217;une app qui consomme ?</p>
+                  </li>
+                  <li>
+                    <p>scaling horizontal, accélérer le traitement du topic</p>
+                  </li>
+                  <li>
+                    <p>mais une position / un offset par consommateur</p>
+                  </li>
+                  <li>
+                    <p><strong>Transition :</strong> pour permettre ça on a les &#8230;&#8203;</p>
+                  </li>
+                </ul>
+              </div>
+            </aside>
+          </div>
+        </section>
+        <section id="_groupe_de_consommateurs">
+          <h2>Groupe de consommateurs</h2>
+          <div class="slide-content">
+            <div class="paragraph c-category">
+              <p>Apache Kafka</p>
+            </div>
+            <div class="imageblock"><img src="images/kafka-consumer-group.png" alt="consumer group"></div>
+            <div class="ulist">
+              <ul>
+                <li class="fragment">
+                  <p>Éviter double consommation</p>
+                </li>
+              </ul>
+            </div>
+            <aside class="notes">
+              <div class="ulist">
+                <ul>
+                  <li>
+                    <p>Plusieurs instances d&#8217;une même application</p>
+                  </li>
+                  <li>
+                    <p>récup des messages via offset de groupe</p>
+                  </li>
+                  <li>
+                    <p>c&#8217;est bien, mais ce n&#8217;est <strong>pas suffisant pour éviter la double
+                        consommation</strong></p>
+                  </li>
+                  <li>
+                    <p><strong>Transition :</strong> il manque la notion de&#8230;&#8203;</p>
+                  </li>
+                </ul>
+              </div>
+            </aside>
+          </div>
+        </section>
+        <section id="_partition">
+          <h2>Partition</h2>
+          <div class="slide-content">
+            <div class="paragraph c-category">
+              <p>Apache Kafka</p>
+            </div>
+            <div class="imageblock"><img src="images/kafka-partition-producer.png" alt="partition côté producteur">
+            </div>
+            <aside class="notes">
+              <div class="ulist">
+                <ul>
+                  <li>
+                    <p>A la création du topic, pour répartir sur le cluster</p>
+                  </li>
+                  <li>
+                    <p>A la réception du message, aiguillage vers part. #1, #2, ou&#8230;&#8203;</p>
+                    <div class="ulist">
+                      <ul>
+                        <li>
+                          <p>Répartition selon la clé du message</p>
+                        </li>
+                        <li>
+                          <p>Généralement distribution homogène</p>
+                        </li>
+                      </ul>
+                    </div>
+                  </li>
+                  <li>
+                    <p>Si même clé pour tous les messages, tous dans la même partition</p>
+                  </li>
+                  <li>
+                    <p><strong>Transition :</strong> du côté consommateur&#8230;&#8203;</p>
+                  </li>
+                  <li>
+                    <p>(clé déterminé/able par le producer) TODO A VERIFIER</p>
+                  </li>
+                </ul>
+              </div>
+            </aside>
+          </div>
+        </section>
+        <section id="_partition_2">
+          <h2>Partition</h2>
+          <div class="slide-content">
+            <div class="paragraph c-category">
+              <p>Apache Kafka</p>
+            </div>
+            <div class="imageblock"><img src="images/kafka-partition-consumer.png" alt="partition côté consommateur">
+            </div>
+            <aside class="notes">
+              <div class="ulist">
+                <ul>
+                  <li>
+                    <p>D&#8217;un point de vue consommation</p>
+                    <div class="ulist">
+                      <ul>
+                        <li>
+                          <p>Répartition sur les membres du groupe de conso</p>
+                        </li>
+                        <li>
+                          <p>Une partition consommée par un seul membre du groupe</p>
+                        </li>
+                      </ul>
+                    </div>
+                  </li>
+                  <li>
+                    <p><strong>Transition :</strong> avec un seul conso</p>
+                  </li>
+                </ul>
+              </div>
+            </aside>
+          </div>
+        </section>
+        <section id="_partition_3">
+          <h2>Partition</h2>
+          <div class="slide-content">
+            <div class="paragraph c-category">
+              <p>Apache Kafka</p>
+            </div>
+            <div class="imageblock"><img src="images/kafka-partition-one-consumer.png"
+                alt="partition un seul consommateur"></div>
+            <aside class="notes">
+              <div class="ulist">
+                <ul>
+                  <li>
+                    <p>Un consommateur peut consommer plusieurs partitions</p>
+                  </li>
+                  <li>
+                    <p>Très important pour la scalabilité horizontale</p>
+                  </li>
+                  <li>
+                    <p>Inutile d&#8217;avoir plus de conso que de partition</p>
+                  </li>
+                  <li>
+                    <p>Nb partitions et nb conso très liés</p>
+                  </li>
+                  <li>
+                    <p><strong>Transition :</strong> vue d&#8217;ensemble</p>
+                  </li>
+                </ul>
+              </div>
+            </aside>
+          </div>
+        </section>
+        <section id="_partition_4">
+          <h2>Partition</h2>
+          <div class="slide-content">
+            <div class="paragraph c-category">
+              <p>Apache Kafka</p>
+            </div>
+            <div class="imageblock"><img src="images/kafka-partition.png"
+                alt="production de messages vers partition et consommation"></div>
+            <aside class="notes">
+              <div class="ulist">
+                <ul>
+                  <li>
+                    <p><strong>BOIRE</strong></p>
+                  </li>
+                  <li>
+                    <p>Répartition selon la clé du message</p>
+                  </li>
+                  <li>
+                    <p>Une partition consommée par un seul membre du groupe</p>
+                  </li>
+                  <li>
+                    <p><strong>Transition :</strong> les partitions contiennent les messages (bien précieux), <strong>on
+                        aimerait éviter de les perdre</strong>&#8230;&#8203;</p>
+                  </li>
+                </ul>
+              </div>
+            </aside>
+          </div>
+        </section>
+        <section id="_réplication">
+          <h2>Réplication</h2>
+          <div class="slide-content">
+            <div class="paragraph c-category">
+              <p>Apache Kafka</p>
+            </div>
+            <div class="ulist">
+              <ul>
+                <li>
+                  <p>Répliquer les partitions</p>
+                </li>
+                <li>
+                  <p>Facteur de réplication</p>
+                </li>
+                <li>
+                  <p>Tolérance à la panne</p>
+                </li>
+              </ul>
+            </div>
+            <aside class="notes">
+              <div class="ulist">
+                <ul>
+                  <li>
+                    <p>réplique N fois les messages</p>
+                  </li>
+                  <li>
+                    <p>Avec tout ça, on a un bon baggage pour comprendre la suite</p>
+                  </li>
+                  <li>
+                    <p><strong>Transition :</strong> si on récapitule, Kafka&#8230;&#8203;</p>
+                  </li>
+                </ul>
+              </div>
+            </aside>
+          </div>
+        </section>
+        <section id="_pour_notre_besoin">
+          <h2>Pour notre besoin</h2>
+          <div class="slide-content">
+            <div class="paragraph c-category">
+              <p>Apache Kafka</p>
+            </div>
+            <div class="ulist checklist">
+              <ul class="checklist">
+                <li>
+                  <p>Architecture microservices : un bon cas d&#8217;usage</p>
+                </li>
+                <li>
+                  <p><input type="checkbox" data-item-complete="1" checked disabled>Asynchrone</p>
+                </li>
+                <li>
+                  <p><input type="checkbox" data-item-complete="1" checked disabled>Pub/Sub</p>
+                </li>
+                <li>
+                  <p><input type="checkbox" data-item-complete="1" checked disabled>Ordre des messages</p>
+                </li>
+                <li>
+                  <p><input type="checkbox" data-item-complete="1" checked disabled>Disponibilité</p>
+                </li>
+                <li>
+                  <p><input type="checkbox" data-item-complete="1" checked disabled>Lissage de la consommation</p>
+                </li>
+              </ul>
+            </div>
+            <aside class="notes">
+              <div class="ulist">
+                <ul>
+                  <li>
+                    <p>Coche toutes les cases</p>
+                  </li>
+                  <li>
+                    <p>on démarre</p>
+                    <div class="ulist">
+                      <ul>
+                        <li>
+                          <p>première montée en compétence</p>
+                        </li>
+                        <li>
+                          <p>développements bien avancés</p>
+                        </li>
+                        <li>
+                          <p>flux déjà en place</p>
+                        </li>
+                      </ul>
+                    </div>
+                  </li>
+                  <li>
+                    <p>Mais&#8230;&#8203; les difficultés ont commmencé à arriver</p>
+                  </li>
+                  <li>
+                    <p><strong>Transition :</strong> les présentations sont faites, on va pouvoir parler des problèmes
+                    </p>
+                  </li>
+                </ul>
+              </div>
+            </aside>
+          </div>
+        </section>
+      </section>
+      <section>
+        <section id="_pièges" class="c-slide--lights c-slide--title backgrounds">
+          <h2>Pièges</h2>
+          <div class="slide-content">
+            <div class="paragraph">
+              <p>☠️</p>
+            </div>
+            <aside class="notes">
+              <div class="ulist">
+                <ul>
+                  <li>
+                    <p>top <strong>25min</strong></p>
+                  </li>
+                  <li>
+                    <p>Tout semblait bien parti</p>
+                  </li>
+                  <li>
+                    <p>Mais désillution</p>
+                  </li>
+                  <li>
+                    <p>On a transpiré</p>
+                  </li>
+                  <li>
+                    <p>🪤</p>
+                  </li>
+                </ul>
+              </div>
+            </aside>
+          </div>
+        </section>
+        <section id="_menfin">
+          <h2>M&#8217;enfin&#8230;&#8203;</h2>
+          <div class="slide-content">
+            <div class="paragraph c-category">
+              <p>Pièges</p>
+            </div>
+            <div class="imageblock"><img src="images/menfin.png" alt="Gastion Lagaffe"></div>
+            <aside class="notes">
+              <div class="ulist">
+                <ul>
+                  <li>
+                    <p>je vais vous raconter mes problèmes</p>
+                  </li>
+                  <li>
+                    <p>3 catégories</p>
+                  </li>
+                  <li>
+                    <p>avec difficultés dans l&#8217;utilisation / dev</p>
+                    <div class="ulist">
+                      <ul>
+                        <li>
+                          <p>rejeu</p>
+                        </li>
+                      </ul>
+                    </div>
+                  </li>
+                  <li>
+                    <p>non-utilisation</p>
+                    <div class="ulist">
+                      <ul>
+                        <li>
+                          <p>un jour j&#8217;en aurais besoin ! Mais en fait non</p>
+                        </li>
+                      </ul>
+                    </div>
+                  </li>
+                  <li>
+                    <p>infra, maintenance</p>
+                    <div class="ulist">
+                      <ul>
+                        <li>
+                          <p>histoire d&#8217;argent</p>
+                        </li>
+                      </ul>
+                    </div>
+                  </li>
+                </ul>
+              </div>
+            </aside>
+          </div>
+        </section>
+        <section id="_message_en_erreur">
+          <h2>Message en erreur</h2>
+          <div class="slide-content">
+            <div class="paragraph c-category">
+              <p>Pièges</p>
+            </div>
+            <div class="quoteblock c-quote c-quote--huge">
+              <blockquote>Si tu n&#8217;acquittes pas ton message, il revient toujours vers toi
+                🪃</blockquote>
+              <div class="attribution">&#8212; Personne n'a vraiment dit ça</div>
+            </div>
+            <aside class="notes">
+              <div class="ulist">
+                <ul>
+                  <li>
+                    <p>kafka renvoie</p>
+                  </li>
+                  <li>
+                    <p><strong>Transition :</strong> et en cas d&#8217;erreur&#8230;&#8203;</p>
+                  </li>
+                </ul>
+              </div>
+            </aside>
+          </div>
+        </section>
+        <section id="_en_cas_derreur">
+          <h2>En cas d&#8217;erreur</h2>
+          <div class="slide-content">
+            <div class="paragraph c-category">
+              <p>Pièges &gt; Rejeu</p>
+            </div>
+            <div class="ulist">
+              <ul>
+                <li>
+                  <p>Non-acquittement et retour infini</p>
+                </li>
+              </ul>
+            </div>
+            <div class="ulist">
+              <ul>
+                <li class="fragment">
+                  <p>Acquittement et perte du message</p>
+                </li>
+              </ul>
+            </div>
+            <aside class="notes">
+              <div class="ulist">
+                <ul>
+                  <li>
+                    <p>si on acquitte, le message ne reviendra pas</p>
+                  </li>
+                  <li>
+                    <p>et oui, c&#8217;est l&#8217;offset</p>
+                  </li>
+                  <li>
+                    <p><strong>Transition :</strong> <strong>on aimerait réessayer, on ne sait jamais</strong>, la base
+                      était indispo, elle est peut-être revenue&#8230;&#8203;</p>
+                  </li>
+                </ul>
+              </div>
+            </aside>
+          </div>
+        </section>
+        <section id="_rejeu_de_message_en_erreur">
+          <h2>Rejeu de message en erreur</h2>
+          <div class="slide-content">
+            <div class="paragraph c-category">
+              <p>Pièges &gt; Rejeu</p>
+            </div>
+            <div class="ulist">
+              <ul>
+                <li>
+                  <p>Stratégie applicative</p>
+                </li>
+              </ul>
+            </div>
+            <div class="ulist">
+              <ul>
+                <li class="fragment">
+                  <p>N tentatives</p>
+                </li>
+                <li class="fragment">
+                  <p>Délai</p>
+                </li>
+                <li class="fragment">
+                  <p>Échec = DLT</p>
+                  <div class="ulist">
+                    <ul>
+                      <li>
+                        <p>Dead Letter Topic</p>
+                      </li>
+                    </ul>
+                  </div>
+                </li>
+              </ul>
+            </div>
+            <aside class="notes">
+              <div class="ulist">
+                <ul>
+                  <li>
+                    <p>Acquittement et publication DLT pour analyse</p>
+                  </li>
+                  <li>
+                    <p><strong>Transition :</strong> on a deux possibilités, entre un rejeu bloquant et non-bloquant
+                      &#8230;&#8203;</p>
+                  </li>
+                </ul>
+              </div>
+            </aside>
+          </div>
+        </section>
+        <section id="_stratégie_de_rejeu">
+          <h2>Stratégie de rejeu</h2>
+          <div class="slide-content">
+            <div class="paragraph c-category">
+              <p>Pièges &gt; Rejeu</p>
+            </div>
+            <div class="ulist">
+              <ul>
+                <li>
+                  <p>Stratégie #1 : bloquant</p>
+                  <div class="ulist">
+                    <ul>
+                      <li>
+                        <p>Blocage de la consommation</p>
+                      </li>
+                      <li>
+                        <p>Conservation de l&#8217;ordre</p>
+                      </li>
+                    </ul>
+                  </div>
+                </li>
+              </ul>
+            </div>
+            <div class="imageblock"><img src="images/retry-blocking-ko.png" alt="partition"></div>
+            <aside class="notes">
+              <div class="ulist">
+                <ul>
+                  <li>
+                    <p>Commençons par le rejeu bloquant</p>
+                  </li>
+                  <li>
+                    <p>on bloque la consommation du topic (enfin de la partition)</p>
+                  </li>
+                  <li>
+                    <p>le temps de voir si on peut finalement intégrer le message</p>
+                  </li>
+                  <li>
+                    <p><strong>Transition :</strong> et c&#8217;est ce qu&#8217;on a choisi&#8230;&#8203;</p>
+                  </li>
+                </ul>
+              </div>
+            </aside>
+          </div>
+        </section>
+        <section id="_rejeu_bloquant">
+          <h2>Rejeu bloquant</h2>
+          <div class="slide-content">
+            <div class="paragraph c-category">
+              <p>Pièges &gt; Rejeu</p>
+            </div>
+            <div class="ulist">
+              <ul>
+                <li>
+                  <p>Stratégie retenue</p>
+                  <div class="ulist">
+                    <ul>
+                      <li>
+                        <p>Si dépendance indisponible</p>
+                      </li>
+                      <li>
+                        <p>N tentatives</p>
+                      </li>
+                      <li>
+                        <p>Limité dans le temps</p>
+                      </li>
+                    </ul>
+                  </div>
+                </li>
+              </ul>
+            </div>
+            <aside class="notes">
+              <div class="ulist">
+                <ul>
+                  <li>
+                    <p>Pas mal si dépendance indispo</p>
+                  </li>
+                  <li>
+                    <p><strong>Transition :</strong> mais, les tentatives de rejeu ont eu des conséquences&#8230;&#8203;
+                    </p>
+                  </li>
+                </ul>
+              </div>
+            </aside>
+          </div>
+        </section>
+        <section id="_rejeu_bloquant_2">
+          <h2>Rejeu bloquant</h2>
+          <div class="slide-content">
+            <div class="paragraph c-category">
+              <p>Pièges &gt; Rejeu</p>
+            </div>
+            <div class="ulist">
+              <ul>
+                <li>
+                  <p>Mais&#8230;&#8203;</p>
+                </li>
+                <li>
+                  <p>😟 <strong>Mise en échec du consommateur</strong></p>
+                </li>
+                <li>
+                  <p>😰 <strong>Expulsion du groupe</strong></p>
+                </li>
+                <li>
+                  <p>😭 <strong>Retard</strong></p>
+                </li>
+              </ul>
+            </div>
+            <aside class="notes">
+              <div class="ulist">
+                <ul>
+                  <li>
+                    <p>si donne pas de nouvelles au broker&#8230;&#8203;</p>
+                  </li>
+                  <li>
+                    <p>Kafka avait quelques surprises pour nous</p>
+                  </li>
+                  <li>
+                    <p><strong>Transition :</strong> on manquait d&#8217;expérience&#8230;&#8203;</p>
+                  </li>
+                </ul>
+              </div>
+            </aside>
+          </div>
+        </section>
+        <section id="_si_tout_va_bien">
+          <h2>Si tout va bien</h2>
+          <div class="slide-content">
+            <div class="paragraph c-category">
+              <p>Pièges &gt; Rejeu</p>
+            </div>
+            <div class="imageblock"><img src="images/kafka-blocking-retry-max-poll-interval.png"
+                alt="max poll interval"></div>
+            <aside class="notes">
+              <div class="paragraph">
+                <p>max poll interval</p>
+              </div>
+            </aside>
+          </div>
+        </section>
+        <section id="_si_cest_trop_long">
+          <h2>Si c&#8217;est trop long</h2>
+          <div class="slide-content">
+            <div class="paragraph c-category">
+              <p>Pièges &gt; Rejeu</p>
+            </div>
+            <div class="imageblock"><img src="images/kafka-blocking-retry-max-poll-interval-fail.png"
+                alt="max poll interval"></div>
+            <aside class="notes">
+              <div class="ulist">
+                <ul>
+                  <li>
+                    <p>max poll interval trop court</p>
+                  </li>
+                  <li>
+                    <p>rebalance</p>
+                  </li>
+                </ul>
+              </div>
+            </aside>
+          </div>
+        </section>
+        <section id="_rejeu_bloquant_3">
+          <h2>Rejeu bloquant</h2>
+          <div class="slide-content">
+            <div class="paragraph c-category">
+              <p>Pièges &gt; Rejeu</p>
+            </div>
+            <div class="ulist">
+              <ul>
+                <li>
+                  <p>Compréhension du mécanisme de consommation</p>
+                </li>
+                <li>
+                  <p>Réglage fin</p>
+                </li>
+              </ul>
+            </div>
+            <aside class="notes">
+              <div class="ulist">
+                <ul>
+                  <li>
+                    <p>On a ajouter de la config pour régler :</p>
+                    <div class="ulist">
+                      <ul>
+                        <li>
+                          <p>l&#8217;intervalle max entre 2 récupération de messages &#8658; 5min</p>
+                        </li>
+                        <li>
+                          <p>le nombre max de messages récup d&#8217;un coup &#8658; 500 messages</p>
+                        </li>
+                        <li>
+                          <p>etc.</p>
+                        </li>
+                      </ul>
+                    </div>
+                  </li>
+                  <li>
+                    <p><strong>Transition :</strong> par curiosité si on regardait l&#8217;autre stratégie de
+                      rejeu&#8230;&#8203;</p>
+                  </li>
+                </ul>
+              </div>
+            </aside>
+          </div>
+        </section>
+        <section id="_stratégie_de_rejeu_2">
+          <h2>Stratégie de rejeu</h2>
+          <div class="slide-content">
+            <div class="paragraph c-category">
+              <p>Pièges &gt; Rejeu</p>
+            </div>
+            <div class="ulist">
+              <ul>
+                <li>
+                  <p>Stratégie #2 : non-bloquant</p>
+                  <div class="ulist">
+                    <ul>
+                      <li>
+                        <p>Publication dans un autre topic</p>
+                      </li>
+                      <li>
+                        <p>Consommation ultérieure</p>
+                      </li>
+                    </ul>
+                  </div>
+                </li>
+              </ul>
+            </div>
+            <aside class="notes">
+              <div class="ulist">
+                <ul>
+                  <li>
+                    <p>consommation quelques secondes ou minutes plus tard</p>
+                  </li>
+                  <li>
+                    <p><strong>Transition :</strong> d&#8217;un point de vue applicatif&#8230;&#8203;</p>
+                  </li>
+                </ul>
+              </div>
+            </aside>
+          </div>
+        </section>
+        <section id="_rejeu_non_bloquant">
+          <h2>Rejeu non-bloquant</h2>
+          <div class="slide-content">
+            <div class="paragraph c-category">
+              <p>Pièges &gt; Rejeu</p>
+            </div>
+            <div class="ulist">
+              <ul>
+                <li>
+                  <p>Pas de blocage</p>
+                </li>
+                <li>
+                  <p>Perte de l&#8217;ordre</p>
+                </li>
+                <li>
+                  <p>Démultiplication des topics</p>
+                </li>
+              </ul>
+            </div>
+            <aside class="notes">
+              <div class="ulist">
+                <ul>
+                  <li>
+                    <p>on ne bloque pas la consommation du topic (enfin de la partition), on ne prend pas de retard</p>
+                  </li>
+                  <li>
+                    <p>ordre sans importance</p>
+                  </li>
+                  <li>
+                    <p>cas d&#8217;usage :</p>
+                    <div class="ulist">
+                      <ul>
+                        <li>
+                          <p>en attente d&#8217;une donnée</p>
+                        </li>
+                        <li>
+                          <p>historisation d&#8217;un événement, tout est dans le message, pas de conflit possible</p>
+                        </li>
+                      </ul>
+                    </div>
+                  </li>
+                  <li>
+                    <p><strong>Transition :</strong> plus en détail&#8230;&#8203;</p>
+                  </li>
+                </ul>
+              </div>
+            </aside>
+          </div>
+        </section>
+        <section id="_rejeu_non_bloquant_2">
+          <h2>Rejeu non-bloquant</h2>
+          <div class="slide-content">
+            <div class="paragraph c-category">
+              <p>Pièges &gt; Rejeu</p>
+            </div>
+            <div class="ulist">
+              <ul>
+                <li>
+                  <p>N topics pour N tentatives</p>
+                </li>
+                <li>
+                  <p>Coût infrastructure</p>
+                </li>
+              </ul>
+            </div>
+            <aside class="notes">
+              <div class="ulist">
+                <ul>
+                  <li>
+                    <p>pas de stratégie qui fonctionne à tous les coups</p>
+                  </li>
+                  <li>
+                    <p><strong>Transition :</strong> difficultés implem, ça arrive, mais c&#8217;est pas tout,
+                      <strong>aussi des fonctionnalités pas utilisées</strong> &#8230;&#8203;</p>
+                  </li>
+                </ul>
+              </div>
+            </aside>
+          </div>
+        </section>
+        <section id="_usages">
+          <h2>Usages</h2>
+          <div class="slide-content">
+            <div class="paragraph c-category">
+              <p>Pièges</p>
+            </div>
+            <aside class="notes">
+              <div class="ulist">
+                <ul>
+                  <li>
+                    <p><strong>BOIRE</strong></p>
+                  </li>
+                  <li>
+                    <p>plusieurs fonctionnalités intéressantes, connues, mais pas utilisées</p>
+                  </li>
+                  <li>
+                    <p>passage en revue</p>
+                  </li>
+                </ul>
+              </div>
+            </aside>
+          </div>
+        </section>
+        <section id="_multi_consommateurs">
+          <h2>Multi-consommateurs</h2>
+          <div class="slide-content">
+            <div class="paragraph c-category">
+              <p>Pièges &gt; Usages</p>
+            </div>
+            <div class="ulist">
+              <ul>
+                <li>
+                  <p>Promesse</p>
+                  <div class="ulist">
+                    <ul>
+                      <li>
+                        <p>Autant de consommateurs que l&#8217;on veut</p>
+                      </li>
+                      <li>
+                        <p>Producteur n&#8217;a pas besoin de savoir qui</p>
+                      </li>
+                    </ul>
+                  </div>
+                </li>
+              </ul>
+            </div>
+          </div>
+        </section>
+        <section id="_multi_consommateurs_2">
+          <h2>Multi-consommateurs</h2>
+          <div class="slide-content">
+            <div class="paragraph c-category">
+              <p>Pièges &gt; Usages</p>
+            </div>
+            <div class="ulist">
+              <ul>
+                <li>
+                  <p>En réalité</p>
+                  <div class="ulist">
+                    <ul>
+                      <li>
+                        <p>Dev producteurs et consommateurs</p>
+                      </li>
+                      <li>
+                        <p>Pas d&#8217;écoute des événements par d&#8217;autres équipes</p>
+                      </li>
+                      <li>
+                        <p>Beaucoup de relations 1-1</p>
+                      </li>
+                    </ul>
+                  </div>
+                </li>
+              </ul>
+            </div>
+            <aside class="notes">
+              <div class="ulist">
+                <ul>
+                  <li>
+                    <p>On ne l&#8217;a pas utilisé</p>
+                    <div class="ulist">
+                      <ul>
+                        <li>
+                          <p>one to one et rarement one to many</p>
+                        </li>
+                        <li>
+                          <p>maîtrise quasi complète des conso</p>
+                        </li>
+                      </ul>
+                    </div>
+                  </li>
+                  <li>
+                    <p><strong>Transition :</strong> autre exemple, historique&#8230;&#8203;</p>
+                  </li>
+                </ul>
+              </div>
+            </aside>
+          </div>
+        </section>
+        <section id="_historique_des_messages">
+          <h2>Historique des messages</h2>
+          <div class="slide-content">
+            <div class="paragraph c-category">
+              <p>Pièges &gt; Usages</p>
+            </div>
+            <div class="ulist">
+              <ul>
+                <li>
+                  <p>Nouveau consommateur</p>
+                  <div class="ulist">
+                    <ul>
+                      <li>
+                        <p>Reprise de tout l&#8217;historique</p>
+                      </li>
+                      <li>
+                        <p>Seulement les nouveaux messages</p>
+                      </li>
+                    </ul>
+                  </div>
+                </li>
+              </ul>
+            </div>
+            <aside class="notes">
+              <div class="paragraph">
+                <p>historique de rétention</p>
+              </div>
+            </aside>
+          </div>
+        </section>
+        <section id="_historique_des_messages_2">
+          <h2>Historique des messages</h2>
+          <div class="slide-content">
+            <div class="paragraph c-category">
+              <p>Pièges &gt; Usages</p>
+            </div>
+            <div class="ulist">
+              <ul>
+                <li>
+                  <p>En réalité</p>
+                  <div class="ulist">
+                    <ul>
+                      <li>
+                        <p>Jamais repris tout l&#8217;historique</p>
+                      </li>
+                      <li>
+                        <p>Ça prend de l&#8217;espace disque</p>
+                      </li>
+                    </ul>
+                  </div>
+                </li>
+              </ul>
+            </div>
+            <aside class="notes">
+              <div class="ulist">
+                <ul>
+                  <li>
+                    <p>On ne l&#8217;a pas utilisé</p>
+                  </li>
+                  <li>
+                    <p><strong>Transition :</strong> reconsommation&#8230;&#8203;</p>
+                  </li>
+                </ul>
+              </div>
+            </aside>
+          </div>
+        </section>
+        <section id="_reconsommation_de_messages">
+          <h2>Reconsommation de messages</h2>
+          <div class="slide-content">
+            <div class="paragraph c-category">
+              <p>Pièges &gt; Usages</p>
+            </div>
+            <div class="ulist">
+              <ul>
+                <li>
+                  <p>Retour en arrière sur l&#8217;offset</p>
+                  <div class="ulist">
+                    <ul>
+                      <li>
+                        <p>Par groupe de consommateur</p>
+                      </li>
+                      <li>
+                        <p>Mise à jour de l&#8217;offset</p>
+                      </li>
+                      <li>
+                        <p>Traiter de nouveau</p>
+                      </li>
+                      <li>
+                        <p>Rattrapage après correction de bug</p>
+                      </li>
+                    </ul>
+                  </div>
+                </li>
+              </ul>
+            </div>
+          </div>
+        </section>
+        <section id="_reconsommation_de_messages_2">
+          <h2>Reconsommation de messages</h2>
+          <div class="slide-content">
+            <div class="paragraph c-category">
+              <p>Pièges &gt; Usages</p>
+            </div>
+            <div class="ulist">
+              <ul>
+                <li>
+                  <p>En réalité</p>
+                  <div class="ulist">
+                    <ul>
+                      <li>
+                        <p>Jugé trop complexe / risqué</p>
+                      </li>
+                      <li>
+                        <p>Relance depuis les systèmes référentiels</p>
+                      </li>
+                      <li>
+                        <p>⌛ Rattrapage manuel</p>
+                      </li>
+                    </ul>
+                  </div>
+                </li>
+              </ul>
+            </div>
+            <aside class="notes">
+              <div class="ulist">
+                <ul>
+                  <li>
+                    <p>On ne l&#8217;a pas utilisé</p>
+                    <div class="ulist">
+                      <ul>
+                        <li>
+                          <p>ressources disques</p>
+                        </li>
+                      </ul>
+                    </div>
+                  </li>
+                  <li>
+                    <p>Manuel : mobilise des gens et du temps</p>
+                  </li>
+                  <li>
+                    <p><strong>Transition :</strong> finalement pas utilisées, <strong>ça arrive, mais c&#8217;est pas
+                        tout, maintenance</strong> aussi</p>
+                  </li>
+                </ul>
+              </div>
+            </aside>
+          </div>
+        </section>
+        <section id="_maintenance">
+          <h2>Maintenance</h2>
+          <div class="slide-content">
+            <div class="paragraph c-category">
+              <p>Pièges &gt; Maintenances et infra</p>
+            </div>
+            <div class="ulist">
+              <ul>
+                <li>
+                  <p>Maîtrise de l&#8217;infrastructure</p>
+                </li>
+                <li>
+                  <p>Configuration des brokers</p>
+                </li>
+                <li>
+                  <p>Suivi des DLT</p>
+                </li>
+              </ul>
+            </div>
+            <aside class="notes">
+              <div class="ulist">
+                <ul>
+                  <li>
+                    <p><strong>BOIRE</strong></p>
+                  </li>
+                  <li>
+                    <p>Là où on a pêché&#8230;&#8203;</p>
+                  </li>
+                  <li>
+                    <p>Ex : mauvaise configuration de la rétention, on garde des messages trop longtemps</p>
+                  </li>
+                  <li>
+                    <p>Observabilité / alerting qui laissait à désirer</p>
+                  </li>
+                  <li>
+                    <p>Selon orga, des équipes différentes gère la conf, peut compliquer les choses</p>
+                  </li>
+                  <li>
+                    <p><strong>Transition :</strong> au départ on premise, un jour, le move to cloud est arrivé</p>
+                  </li>
+                </ul>
+              </div>
+            </aside>
+          </div>
+        </section>
+        <section id="_cloud">
+          <h2>Cloud</h2>
+          <div class="slide-content">
+            <div class="paragraph c-category">
+              <p>Pièges &gt; Maintenances et infra</p>
+            </div>
+            <div class="ulist">
+              <ul>
+                <li class="fragment">
+                  <p>Lift and shift sur Kafka managé</p>
+                </li>
+                <li class="fragment">
+                  <p>💰</p>
+                </li>
+                <li class="fragment">
+                  <p>Volonté de réduire l&#8217;utilisation</p>
+                </li>
+              </ul>
+            </div>
+            <aside class="notes">
+              <div class="ulist">
+                <ul>
+                  <li>
+                    <p>on prend ce qu&#8217;on a on prem, et on le met sur le cloud AWS</p>
+                  </li>
+                  <li>
+                    <p>avec un Kafka managé tout de même</p>
+                  </li>
+                  <li>
+                    <p>ça coûte cher, et ce n&#8217;est pas tout</p>
+                  </li>
+                  <li>
+                    <p><strong>Transition :</strong> en terme de volume, on est parti avec&#8230;&#8203;</p>
+                  </li>
+                </ul>
+              </div>
+            </aside>
+          </div>
+        </section>
+        <section id="_cloud_2">
+          <h2>Cloud</h2>
+          <div class="slide-content">
+            <div class="paragraph c-category">
+              <p>Pièges &gt; Maintenances et infra</p>
+            </div>
+            <div class="paragraph">
+              <p>50 topics</p>
+            </div>
+            <div class="paragraph fragment">
+              <p>x 12 partitions</p>
+            </div>
+            <div class="paragraph fragment">
+              <p>x 2 (DLT)</p>
+            </div>
+            <div class="ulist">
+              <ul>
+                <li class="fragment">
+                  <p>= 1 200 partitions différentes</p>
+                </li>
+              </ul>
+            </div>
+          </div>
+        </section>
+        <section id="_cloud_3">
+          <h2>Cloud</h2>
+          <div class="slide-content">
+            <div class="paragraph c-category">
+              <p>Pièges &gt; Maintenances et infra</p>
+            </div>
+            <div class="paragraph">
+              <p>70 topics</p>
+            </div>
+            <div class="paragraph fragment">
+              <p>x 12 partitions</p>
+            </div>
+            <div class="paragraph fragment">
+              <p>x 2 (DLT)</p>
+            </div>
+            <div class="ulist">
+              <ul>
+                <li class="fragment">
+                  <p>= 1 680 partitions différentes</p>
+                </li>
+              </ul>
+            </div>
+          </div>
+        </section>
+        <section id="_cloud_4">
+          <h2>Cloud</h2>
+          <div class="slide-content">
+            <div class="paragraph c-category">
+              <p>Pièges &gt; Maintenances et infra</p>
+            </div>
+            <div class="ulist">
+              <ul>
+                <li>
+                  <p>Limites des brokers AWS</p>
+                  <div class="ulist">
+                    <ul>
+                      <li>
+                        <p>Nombre de partitions par broker</p>
+                      </li>
+                    </ul>
+                  </div>
+                </li>
+              </ul>
+            </div>
+            <aside class="notes">
+              <div class="ulist">
+                <ul>
+                  <li>
+                    <p>des limites sur les brokers, selon la taille de la machine</p>
+                  </li>
+                  <li>
+                    <p><strong>Transition :</strong> ça donnait&#8230;&#8203;</p>
+                  </li>
+                </ul>
+              </div>
+            </aside>
+          </div>
+        </section>
+        <section id="_cloud_5">
+          <h2>Cloud</h2>
+          <div class="slide-content">
+            <div class="paragraph c-category">
+              <p>Pièges &gt; Maintenances et infra</p>
+            </div>
+            <div class="paragraph">
+              <p>1 000 partitions par broker, max 1 500</p>
+            </div>
+            <div class="ulist">
+              <ul>
+                <li class="fragment">
+                  <p>1 680 &gt; 1 500</p>
+                </li>
+              </ul>
+            </div>
+            <aside class="notes">
+              <div class="ulist">
+                <ul>
+                  <li>
+                    <p>on a eu un problème sur maintenance obligatoire : upgrade kafka aws</p>
+                  </li>
+                  <li>
+                    <p><strong>Transition :</strong> qu&#8217;est-ce qu&#8217;on fait ?</p>
+                  </li>
+                </ul>
+              </div>
+            </aside>
+          </div>
+        </section>
+        <section id="_cloud_6">
+          <h2>Cloud</h2>
+          <div class="slide-content">
+            <div class="paragraph c-category">
+              <p>Pièges &gt; Maintenances et infra</p>
+            </div>
+            <div class="paragraph">
+              <p>Qu&#8217;est-ce qu&#8217;on fait ?</p>
+            </div>
+            <div class="ulist">
+              <ul>
+                <li class="fragment">
+                  <p>des brokers plus gros ?</p>
+                </li>
+                <li class="fragment">
+                  <p>plus de brokers ?</p>
+                </li>
+                <li class="fragment">
+                  <p>💰++</p>
+                </li>
+                <li class="fragment">
+                  <p>optimisation</p>
+                </li>
+                <li class="fragment">
+                  <p>💰--</p>
+                </li>
+              </ul>
+            </div>
+            <aside class="notes">
+              <div class="ulist">
+                <ul>
+                  <li>
+                    <p>on a plusieurs possibilités</p>
+                  </li>
+                  <li>
+                    <p>en tout cas c&#8217;est plus cher&#8230;&#8203; dans un 1er temps</p>
+                  </li>
+                  <li>
+                    <p>réduction du nombre de partitions sur les DLT</p>
+                  </li>
+                  <li>
+                    <p><strong>Transition :</strong> pour résumer nos problèmes&#8230;&#8203;</p>
+                  </li>
+                </ul>
+              </div>
+            </aside>
+          </div>
+        </section>
+        <section id="_on_est_tombé_dedans">
+          <h2>On est tombé dedans&#8230;&#8203;</h2>
+          <div class="slide-content">
+            <div class="paragraph c-category">
+              <p>Pièges</p>
+            </div>
+            <div class="ulist">
+              <ul>
+                <li>
+                  <p>Erreurs</p>
+                </li>
+                <li>
+                  <p>Usages</p>
+                </li>
+                <li>
+                  <p>Maintenance</p>
+                </li>
+              </ul>
+            </div>
+            <aside class="notes">
+              <div class="ulist">
+                <ul>
+                  <li>
+                    <p>on s&#8217;est laissé piégé sur la gestion des erreurs, fait quelques frayeurs</p>
+                  </li>
+                  <li>
+                    <p>on a laissé de côté des fonctionnalités</p>
+                  </li>
+                  <li>
+                    <p>on a appris quelques leçons du cloud</p>
+                  </li>
+                  <li>
+                    <p>mais ça tourne bien en prod</p>
+                  </li>
+                  <li>
+                    <p><strong>Transition :</strong> est-ce que tout ça aurait pu mieux se passer ?</p>
+                  </li>
+                </ul>
+              </div>
+            </aside>
+          </div>
+        </section>
+      </section>
+      <section>
+        <section id="_fin_alternative" class="c-slide--lights c-slide--title backgrounds">
+          <h2>Fin alternative</h2>
+          <div class="slide-content">
+            <aside class="notes">
+              <div class="ulist">
+                <ul>
+                  <li>
+                    <p>top <strong>40min</strong></p>
+                  </li>
+                  <li>
+                    <p><strong>BOIRE</strong></p>
+                  </li>
+                  <li>
+                    <p>mieux finir ?</p>
+                  </li>
+                  <li>
+                    <p>fin heureuse ?</p>
+                  </li>
+                </ul>
+              </div>
+            </aside>
+          </div>
+        </section>
+        <section id="_si_cétait_à_refaire">
+          <h2>Si c&#8217;était à refaire ?</h2>
+          <div class="slide-content">
+            <div class="paragraph c-category">
+              <p>Fin alternative</p>
+            </div>
+            <aside class="notes">
+              <div class="ulist">
+                <ul>
+                  <li>
+                    <p>qu&#8217;est-ce qu&#8217;on a raté ?</p>
+                  </li>
+                  <li>
+                    <p><strong>Transition :</strong> je prêterais plus d&#8217;attention à&#8230;&#8203;</p>
+                  </li>
+                </ul>
+              </div>
+            </aside>
+          </div>
+        </section>
+        <section id="_préparer_ses_consommateurs">
+          <h2>Préparer ses consommateurs</h2>
+          <div class="slide-content">
+            <div class="ulist">
+              <ul>
+                <li>
+                  <p>⏳ Temps de traitement max</p>
+                </li>
+                <li>
+                  <p>🎚️ Combien de messages à la fois</p>
+                </li>
+                <li>
+                  <p>🔧 Ajustement configuration</p>
+                </li>
+              </ul>
+            </div>
+            <div class="paragraph c-category">
+              <p>Fin alternative</p>
+            </div>
+            <aside class="notes">
+              <div class="ulist">
+                <ul>
+                  <li>
+                    <p>pour chaque topic :</p>
+                    <div class="ulist">
+                      <ul>
+                        <li>
+                          <p>temps de traitement max</p>
+                        </li>
+                        <li>
+                          <p>combien de messages je peux demander à la fois</p>
+                        </li>
+                        <li>
+                          <p>je reste bien dans les clous de ma config Kafka ?</p>
+                        </li>
+                      </ul>
+                    </div>
+                  </li>
+                  <li>
+                    <p><strong>Transition :</strong> et on échappe pas à l&#8217;anticipation des erreurs&#8230;&#8203;
+                    </p>
+                  </li>
+                </ul>
+              </div>
+            </aside>
+          </div>
+        </section>
+        <section id="_préparer_sa_gestion_derreur">
+          <h2>Préparer sa gestion d&#8217;erreur</h2>
+          <div class="slide-content">
+            <div class="ulist">
+              <ul>
+                <li>
+                  <p>Risque</p>
+                </li>
+                <li>
+                  <p>Rejeu ?</p>
+                </li>
+                <li>
+                  <p>Rollback</p>
+                </li>
+              </ul>
+            </div>
+            <div class="paragraph c-category">
+              <p>Fin alternative</p>
+            </div>
+            <aside class="notes">
+              <div class="ulist">
+                <ul>
+                  <li>
+                    <p>ça paraît bête à dire</p>
+                  </li>
+                  <li>
+                    <p>quel risque lors du traitement ?</p>
+                    <div class="ulist">
+                      <ul>
+                        <li>
+                          <p>absence de donnée / incohérence</p>
+                        </li>
+                        <li>
+                          <p>système tiers indispo</p>
+                        </li>
+                        <li>
+                          <p>quel rejeu possible, j&#8217;en ai besoin ?</p>
+                        </li>
+                      </ul>
+                    </div>
+                  </li>
+                  <li>
+                    <p>pattern saga, pour le rollback de traitements déjà commités</p>
+                    <div class="ulist">
+                      <ul>
+                        <li>
+                          <p>je ne rentre pas dans le détail</p>
+                        </li>
+                      </ul>
+                    </div>
+                  </li>
+                  <li>
+                    <p><strong>Transition :</strong> et pour ça il faut aussi une bonne&#8230;&#8203;</p>
+                  </li>
+                </ul>
+              </div>
+            </aside>
+          </div>
+        </section>
+        <section id="_observabilité">
+          <h2>Observabilité</h2>
+          <div class="slide-content">
+            <div class="ulist">
+              <ul>
+                <li>
+                  <p>👮 Détecter les dérives</p>
+                </li>
+                <li>
+                  <p>⏰ Retard de consommation</p>
+                </li>
+                <li>
+                  <p>⚠️ Publications DLT</p>
+                </li>
+                <li>
+                  <p>🔁 Rebalance des partitions</p>
+                </li>
+              </ul>
+            </div>
+            <div class="paragraph c-category">
+              <p>Fin alternative</p>
+            </div>
+            <aside class="notes">
+              <div class="ulist">
+                <ul>
+                  <li>
+                    <p>ça aussi ça paraît évident</p>
+                  </li>
+                  <li>
+                    <p>on peut s&#8217;être trompé dans les prépa qu&#8217;on vient de voir</p>
+                  </li>
+                  <li>
+                    <p>on doit pouvoir se rattrapper</p>
+                  </li>
+                  <li>
+                    <p><strong>Transition :</strong> c&#8217;est vrai sur le run appli&#8230;&#8203;</p>
+                  </li>
+                </ul>
+              </div>
+            </aside>
+          </div>
+        </section>
+        <section id="_observabilité_2">
+          <h2>Observabilité</h2>
+          <div class="slide-content">
+            <div class="ulist">
+              <ul>
+                <li>
+                  <p>👮 Détecter les dérives</p>
+                </li>
+                <li>
+                  <p>Mauvaises configuration du cluster</p>
+                </li>
+              </ul>
+            </div>
+            <div class="paragraph c-category">
+              <p>Fin alternative</p>
+            </div>
+            <aside class="notes">
+              <div class="ulist">
+                <ul>
+                  <li>
+                    <p>&#8230;&#8203;mais aussi sur l&#8217;infra</p>
+                  </li>
+                  <li>
+                    <p><strong>Transition :</strong> mais surtout, si pas besoin&#8230;&#8203;</p>
+                  </li>
+                </ul>
+              </div>
+            </aside>
+          </div>
+        </section>
+        <section id="_solutions_alternatives">
+          <h2>Solutions alternatives</h2>
+          <div class="slide-content">
+            <div class="paragraph c-category">
+              <p>Fin alternative</p>
+            </div>
+            <div class="ulist">
+              <ul>
+                <li class="fragment">
+                  <p>Système de queues</p>
+                </li>
+                <li class="fragment">
+                  <p>Cloud</p>
+                </li>
+                <li class="fragment">
+                  <p>Un peu de tout ?</p>
+                </li>
+              </ul>
+            </div>
+            <aside class="notes">
+              <div class="ulist">
+                <ul>
+                  <li>
+                    <p>de quoi on a besoin ?</p>
+                  </li>
+                  <li>
+                    <p>RabbitMQ</p>
+                  </li>
+                  <li>
+                    <p>cloud native : AWS SNS / SQS, Pub/Sub chez GCP</p>
+                  </li>
+                  <li>
+                    <p>des solution différentes selon l&#8217;usage ? Peut aussi être risqué en terme de maintien des
+                      compétences</p>
+                  </li>
+                  <li>
+                    <p>PAS DE SOLUTION MIRACLE</p>
+                  </li>
+                </ul>
+              </div>
+            </aside>
+          </div>
+        </section>
+      </section>
+      <section>
+        <section id="_tout_ça_pour_dire" class="c-slide--lights c-slide--title backgrounds">
+          <h2>Tout ça pour dire&#8230;&#8203;</h2>
+          <div class="slide-content">
+            <aside class="notes">
+              <div class="ulist">
+                <ul>
+                  <li>
+                    <p>top <strong>44min</strong></p>
+                  </li>
+                  <li>
+                    <p>mieux finir ?</p>
+                  </li>
+                  <li>
+                    <p>fin heureuse ?</p>
+                  </li>
+                </ul>
+              </div>
+            </aside>
+          </div>
+        </section>
+        <section id="_kafka">
+          <h2>Kafka ?</h2>
+          <div class="slide-content">
+            <div class="paragraph c-category">
+              <p>Tout ça pour dire&#8230;&#8203;</p>
+            </div>
+            <div class="ulist">
+              <ul>
+                <li>
+                  <p>Message oriented middleware</p>
+                </li>
+                <li>
+                  <p>Fiable</p>
+                </li>
+                <li>
+                  <p>Écosystème riche&#8230;&#8203;</p>
+                </li>
+              </ul>
+            </div>
+            <aside class="notes">
+              <div class="ulist">
+                <ul>
+                  <li>
+                    <p>Rappel de ce que c&#8217;est, promesse</p>
+                  </li>
+                  <li>
+                    <p>Je n&#8217;ai pas parlé de Kafka Connect, Stream, etc.</p>
+                  </li>
+                  <li>
+                    <p><strong>Transition :</strong> perso, je trouve que &#8230;&#8203;</p>
+                  </li>
+                </ul>
+              </div>
+            </aside>
+          </div>
+        </section>
+        <section id="_personnellement">
+          <h2>Personnellement</h2>
+          <div class="slide-content">
+            <div class="paragraph c-category">
+              <p>Tout ça pour dire&#8230;&#8203;</p>
+            </div>
+            <div class="ulist">
+              <ul>
+                <li>
+                  <p>Des difficultés&#8230;&#8203;</p>
+                </li>
+              </ul>
+            </div>
+            <div class="ulist">
+              <ul>
+                <li class="fragment">
+                  <p>&#8230;&#8203; mais une bonne expérience</p>
+                </li>
+              </ul>
+            </div>
+            <aside class="notes">
+              <div class="ulist">
+                <ul>
+                  <li>
+                    <p>on a réussi à globalement l&#8217;apprivoiser (ou il nous a apprivoisé)</p>
+                  </li>
+                  <li>
+                    <p>répondu à nos besoins liés à l&#8217;architecture</p>
+                  </li>
+                  <li>
+                    <p>Observabilité pas au top au départ</p>
+                  </li>
+                  <li>
+                    <p>une connaissance de Kafka</p>
+                  </li>
+                  <li>
+                    <p>ça me permet de parler devant vous</p>
+                  </li>
+                  <li>
+                    <p>j&#8217;espère vous avoir aider à comprendre</p>
+                  </li>
+                  <li>
+                    <p>bon choix ?</p>
+                  </li>
+                  <li>
+                    <p><strong>c&#8217;était trop gros pour notre usage</strong></p>
+                  </li>
+                  <li>
+                    <p>J&#8217;ai un tank mais j&#8217;ai peur d&#8217;écraser les pots de fleur</p>
+                  </li>
+                  <li>
+                    <p><strong>Transition :</strong> je terminerai par deux points&#8230;&#8203;</p>
+                  </li>
+                </ul>
+              </div>
+            </aside>
+          </div>
+        </section>
+        <section id="_asynchrone_cest_pas_si_simple">
+          <h2>Asynchrone, c&#8217;est pas si simple</h2>
+          <div class="slide-content">
+            <div class="paragraph c-category">
+              <p>Tout ça pour dire&#8230;&#8203;</p>
+            </div>
+            <aside class="notes">
+              <div class="ulist">
+                <ul>
+                  <li>
+                    <p>Est-ce qu&#8217;on aurait les mêmes problèmes avec autre chose ?</p>
+                  </li>
+                  <li>
+                    <p>difficultés auxquelles on n&#8217;échappe pas</p>
+                  </li>
+                  <li>
+                    <p>peu importe l&#8217;outil</p>
+                  </li>
+                  <li>
+                    <p>Transition : et aussi&#8230;&#8203;</p>
+                  </li>
+                </ul>
+              </div>
+            </aside>
+          </div>
+        </section>
+        <section id="_eviter_de_choisir_un_outil_pour_les_mauvaises_raisons">
+          <h2>Eviter de choisir un outil pour les mauvaises raisons</h2>
+          <div class="slide-content">
+            <aside class="notes">
+              <div class="ulist">
+                <ul>
+                  <li>
+                    <p>Juste parce que c&#8217;est à la mode ?</p>
+                  </li>
+                  <li>
+                    <p>Savoir où on met les pieds</p>
+                  </li>
+                </ul>
+              </div>
+            </aside>
+          </div>
+        </section>
+      </section>
+      <section id="_merci_pour_votre_attention" class="c-slide--lights backgrounds">
+        <h2>Merci pour votre attention</h2>
+      </section>
+      <section id="_des_questions" class="c-slide--lights backgrounds">
+        <h2>Des questions ?</h2>
+        <div style="display: flex; justify-content: space-around; align-items: center; margin: 2em 0;">
+          <div style="text-align: center;">
+            <img src="images/kereis_qrcode.png" alt="QR Code OpenFeedback" style="max-width: 240px; margin-bottom: 0.2em;">
+            <p style="font-size: 0.5em;">Kerais Tech Day 2025</p>
+          </div>
+        </div>
+        <p>📬 a.madouasse@groupeonepoint.com</p>
+        <img src="images/onepoint.png" alt="Onepoint" style="max-width: 240px; margin-bottom: 0.2em;">
+        <div class="slide-content">
+          <aside class="notes">
+            <div class="paragraph">
+              <p>VERIFIER LES TODO</p>
+            </div>
+            <div class="paragraph">
+              <p>FEEDBACK
+                Rappel des tites de chapites pas cohérent avec les titres au début des parties</p>
+            </div>
+            <div class="paragraph">
+              <p>Redimensionnement topic &#8658; ajout de partition, comment ça se passe ?</p>
+            </div>
+            <div class="paragraph">
+              <p>Clé déterminée ou déterminable par le producteur</p>
+            </div>
+            <div class="paragraph">
+              <p>slide 4.9
+                emoji facteur / boite à lettee pour réception
+                emoji lancer de javelo pour diffusion ?</p>
+            </div>
+            <div class="paragraph">
+              <p>Vincent
+                * Compression des messages sur le réseau ? au stockage ?
+                * Plus de schémas</p>
+            </div>
+            <div class="paragraph">
+              <p>Laurent
+                * Transaction
+                * Evénment et message &#8658; confusion</p>
+            </div>
+            <div class="paragraph">
+              <p>Microservices
+                * attention à ce que je dis sur les perf et la simplicité</p>
+            </div>
+            <div class="paragraph">
+              <p>Conso Kafka &#8658; attention aux schémax sur les offsets</p>
+            </div>
+            <div class="paragraph">
+              <p>Thomas :
+                - pub/sub (GCP) propose un mécanisme de gestion des erreurs
+                - Kafka acquittement de type failure ?
+                - Nombre de partition lié au consommateur
+                - Clarifier la partie partition, expliquer comment Kafka répartie
+                - Dire que c&#8217;était trop gros pour notre usage
+                - J&#8217;ai un tank mais j&#8217;ai peur d&#8217;utilisé les pots de fleur
+                - Insister sur
+                - le cloud native à la fin
+                - Kafka est portable</p>
+            </div>
+            <div class="paragraph">
+              <p>FEEDBACK traités
+                Est-ce qu&#8217;on aurait les mêmes problèmes avec autre chose ?</p>
+            </div>
+            <div class="paragraph">
+              <p>Slide 4.6
+                &#8658; choix Kafka a argumenter un peu plus, donner des alternatives</p>
+            </div>
+          </aside>
+        </div>
+      </section>
+    </div>
+  </div>
+
+
+
+	<script src="plugin/notes/notes.js"></script>
+	<script src="plugin/markdown/markdown.js"></script>
+	<script src="plugin/highlight/highlight.js"></script>
+	<script src="plugin/mermaid/mermaid.js"></script>
+
+  <script src="dist/reveal.js"></script>
+	<script>
+Array.prototype.slice.call(document.querySelectorAll('.slides section')).forEach(function (slide) {
+      if (slide.getAttribute('data-background-color')) return;
+      // user needs to explicitly say he wants CSS color to override otherwise we might break custom css or theme (#226)
+      if (!(slide.classList.contains('canvas') || slide.classList.contains('background'))) return;
+      var bgColor = getComputedStyle(slide).backgroundColor;
+      if (bgColor !== 'rgba(0, 0, 0, 0)' && bgColor !== 'transparent') {
+        slide.setAttribute('data-background-color', bgColor);
+        slide.style.backgroundColor = 'transparent';
+      }
+    });
+
+		// More info about initialization & config:
+		// - https://revealjs.com/initialization/
+		// - https://revealjs.com/config/
+		Reveal.initialize({
+			controls: true,
+			progress: true,
+			center: true,
+			hash: true,
+			slideNumber: true,
+  // Disables the default reveal.js slide layout so that you can use custom CSS layout
+  disableLayout: true,
+  // Vertical centering of slides
+  center: true,
+  // Enables touch navigation on devices with touch input
+  touch: true,
+  // Change the presentation direction to be RTL
+  rtl: false,
+  // Randomizes the order of slides each time the presentation loads
+  shuffle: false,
+  // Turns fragments on and off globally
+  fragments: true,
+  // Flags whether to include the current fragment in the URL,
+  // so that reloading brings you to the same fragment position
+  fragmentInURL: false,
+  // Flags if the presentation is running in an embedded mode,
+  // i.e. contained within a limited portion of the screen
+  embedded: false,
+  // Flags if we should show a help overlay when the questionmark
+  // key is pressed
+  help: true,
+  // Flags if speaker notes should be visible to all viewers
+  showNotes: false,
+  // Global override for autolaying embedded media (video/audio/iframe)
+  // - null: Media will only autoplay if data-autoplay is present
+  // - true: All media will autoplay, regardless of individual setting
+  // - false: No media will autoplay, regardless of individual setting
+  autoPlayMedia: null,
+  // Global override for preloading lazy-loaded iframes
+  // - null: Iframes with data-src AND data-preload will be loaded when within
+  //   the viewDistance, iframes with only data-src will be loaded when visible
+  // - true: All iframes with data-src will be loaded when within the viewDistance
+  // - false: All iframes with data-src will be loaded only when visible
+  preloadIframes: null,
+  // Number of milliseconds between automatically proceeding to the
+  // next slide, disabled when set to 0, this value can be overwritten
+  // by using a data-autoslide attribute on your slides
+  autoSlide: 0,
+  // Stop auto-sliding after user input
+  autoSlideStoppable: true,
+  // Use this method for navigation when auto-sliding
+  autoSlideMethod: Reveal.navigateNext,
+  // Specify the average time in seconds that you think you will spend
+  // presenting each slide. This is used to show a pacing timer in the
+  // speaker view
+  defaultTiming: 40,
+  // Specify the total time in seconds that is available to
+  // present.  If this is set to a nonzero value, the pacing
+  // timer will work out the time available for each slide,
+  // instead of using the defaultTiming value
+  totalTime: 2700,
+  // Specify the minimum amount of time you want to allot to
+  // each slide, if using the totalTime calculation method.  If
+  // the automated time allocation causes slide pacing to fall
+  // below this threshold, then you will see an alert in the
+  // speaker notes window
+  minimumTimePerSlide: 0,
+  // Enable slide navigation via mouse wheel
+  mouseWheel: false,
+  // Hide cursor if inactive
+  hideInactiveCursor: true,
+  // Time before the cursor is hidden (in ms)
+  hideCursorTime: 5000,
+  // Hides the address bar on mobile devices
+  hideAddressBar: true,
+  // Opens links in an iframe preview overlay
+  // Add `data-preview-link` and `data-preview-link="false"` to customise each link
+  // individually
+  previewLinks: false,
+  // Transition style (e.g., none, fade, slide, convex, concave, zoom)
+  transition: 'slide',
+  // Transition speed (e.g., default, fast, slow)
+  transitionSpeed: 'default',
+  // Transition style for full page slide backgrounds (e.g., none, fade, slide, convex, concave, zoom)
+  backgroundTransition: 'fade',
+  // Number of slides away from the current that are visible
+  viewDistance: 3,
+  // Number of slides away from the current that are visible on mobile
+  // devices. It is advisable to set this to a lower number than
+  // viewDistance in order to save resources.
+  mobileViewDistance: 3,
+  // Parallax background image (e.g., "'https://s3.amazonaws.com/hakim-static/reveal-js/reveal-parallax-1.jpg'")
+  parallaxBackgroundImage: '',
+  // Parallax background size in CSS syntax (e.g., "2100px 900px")
+  parallaxBackgroundSize: '',
+  // Number of pixels to move the parallax background per slide
+  // - Calculated automatically unless specified
+  // - Set to 0 to disable movement along an axis
+  parallaxBackgroundHorizontal: null,
+  parallaxBackgroundVertical: null,
+  // The display mode that will be used to show slides
+  display: 'block',
+
+  // The "normal" size of the presentation, aspect ratio will be preserved
+  // when the presentation is scaled to fit different resolutions. Can be
+  // specified using percentage units.
+  width: 960,
+  height: 700,
+
+  // Factor of the display size that should remain empty around the content
+  margin: 0.1,
+
+  // Bounds for smallest/largest possible scale to apply to content
+  minScale: 0.2,
+  maxScale: 1.5,
+
+  // PDF Export Options
+  // Put each fragment on a separate page
+  pdfSeparateFragments: true,
+  // For slides that do not fit on a page, max number of pages
+  pdfMaxPagesPerSlide: 1,
+			// mermaid initialize config
+			mermaid: {
+				// flowchart: {
+				//   curve: 'linear',
+				// },
+			},
+			// Learn about plugins: https://revealjs.com/plugins/
+			plugins: [RevealNotes, RevealMarkdown, RevealHighlight, RevealMermaid]
+		});
+	</script>
+</body>
+
+</html>
